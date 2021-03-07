@@ -82,7 +82,10 @@ local filter = {
 			if not TVSources_var.tmp.source[UpdateID] then return end
 		local Source = TVSources_var.tmp.source[UpdateID]
 		local outm3u, err = tvs_func.get_m3u(decode64('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL05leHRlcnItb3JpZ2luL3NpbXBsZVRWLVBsYXlsaXN0cy9tYWluL3BlZXJz'))
-		if err ~= '' then tvs_core.tvs_ShowError(err) m_simpleTV.Common.Sleep(1000) end
+		if err ~= '' then
+			tvs_core.tvs_ShowError(err)
+			m_simpleTV.Common.Sleep(1000)
+		end
 			if not outm3u or outm3u == '' then return '' end
 		outm3u = outm3u:gsub('#EXTM3U.-\n', '#EXTM3U\n')
 		outm3u = outm3u:gsub('#EXTINF[^,]+,', '#EXTINF:-1 catchup="append" catchup-minutes="180" catchup-source="&offset=${offset}",')
