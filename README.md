@@ -1,5 +1,8 @@
 
 [![script YT][badge-yt]][YT]
+[![script addons][badge-addons]][addons]
+
+
 [![addon TVSources][badge-tvsources]][TVSources]
 [![addon PM][badge-pm]][PM]
 
@@ -31,6 +34,7 @@
 <!------>
 
 [YT]: ../../../simpleTV-YouTube "скрипт YouTube"
+[addons]: ../../../simpleTV-Addons "дополнения"
 [simpleTV API]: http://iptv.gen12.net/dokuwiki/doku.php?id=mantis:simpletv:api "simpleTV API"
 [Lua]: https://www.lua.org/manual/5.1 "Lua 5.1"
 [License]: ../../blob/master/LICENSE "License GPL 3.0"
@@ -38,7 +42,6 @@
 [PM]: http://iptv.gen12.net/bugtracker/view.php?id=1485 "дополнение Password Manager"
 [simpleTV homepage]: http://iptv.gen12.net "домашняя страница"
 [simpleTV bugtracker]: http://iptv.gen12.net/bugtracker "багтрекер"
-[EN]: ./README-EN.md "english"
 
 
 [badge-yt]: https://img.shields.io/badge/%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-YouTube-%232b2b2b?style=flat-square&labelColor=%23303f50 "скрипт YouTube"
@@ -49,3 +52,4 @@
 [badge-pm]: https://img.shields.io/badge/%D0%B4%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-Password%20Manager-%232b2b2b?style=flat-square&labelColor=%23303f50 "дополнение Password Manager"
 [badge-simpletvhomepage]: https://img.shields.io/badge/simpleTV-homepage-%232b2b2b?style=flat-square&labelColor=%23303f50 "домашняя страница"
 [badge-simpletvbugtracker]: https://img.shields.io/badge/simpleTV-bugtracker-%232b2b2b?style=flat-square&labelColor=%23303f50 "багтрекер"
+[badge-addons]: https://img.shields.io/badge/%D0%B4%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F-%232b2b2b?style=flat-squar&labelColor=%23303f50 "дополнения"
