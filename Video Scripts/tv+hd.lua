@@ -1,5 +1,5 @@
--- видеоскрипт для плейлиста "TV+ HD" http://www.tvplusonline.ru (6/2/21)
--- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr/simpleTV
+-- видеоскрипт для плейлиста "TV+ HD" http://www.tvplusonline.ru (6/3/21)
+-- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: tv+hd_pls.lua
 -- расширение дополнения httptimeshift: tvhd-timeshift_ext.lua
