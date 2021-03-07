@@ -1,5 +1,5 @@
 -- скрапер TVS для загрузки плейлиста "TV+ HD" http://www.tvplusonline.ru (6/3/21)
--- Copyright © 2017-2021 Nexterr |
+-- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: tv+hd.lua
 -- расширение дополнения httptimeshift: tvhd-timeshift_ext.lua
