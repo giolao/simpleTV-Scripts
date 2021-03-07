@@ -14,6 +14,10 @@
 
 ---
 
+### Скрипты
+
+---
+
 **Установка**
  - видеоскрипты в папку _`..\luaScr\user\video`_
  - скраперы [TVSources][TVSources] в папку _`..\luaScr\user\TVSources\AutoSetup`_
