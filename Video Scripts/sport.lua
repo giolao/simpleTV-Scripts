@@ -1,5 +1,7 @@
 -- видеоскрипт для плейлиста "Спорт" https://ntvplus.tv (25/1/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- ## необходим ##
+-- скрапер TVS: sport_pls.lua
 -- открывает подобные ссылки:
 -- http://sport.ntv/1040
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end

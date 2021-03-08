@@ -3,8 +3,9 @@
 -- ## необходим ##
 -- скрапер TVS: peersTV_pls.lua
 -- расширение дополнения httptimeshift: peerstv-timeshift_ext.lua
--- ## открывает подобные ссылки:
+-- ## открывает подобные ссылки ##
 -- http://hls.peers.tv/streaming/rentv/126/vh1w/playlist.m3u8
+-- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://[%w%-]+%.peers%.tv/.+') then return end
 		if m_simpleTV.Control.CurrentAddress:match('PARAMS=peers_tv') then return end
