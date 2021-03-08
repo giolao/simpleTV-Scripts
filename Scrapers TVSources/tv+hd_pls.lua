@@ -1,8 +1,7 @@
--- скрапер TVS для загрузки плейлиста "TV+ HD" http://www.tvplusonline.ru (6/3/21)
+-- скрапер TVS для загрузки плейлиста "TV+ HD" http://www.tvplusonline.ru (7/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: tv+hd.lua
--- расширение дополнения httptimeshift: tvhd-timeshift_ext.lua
 -- ## переименовать каналы ##
 local filter = {
 	{'Майдан', 'Майдан (Казань)'},
@@ -34,7 +33,7 @@ local filter = {
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
-	local function showMess(str, color)
+	local function showMsg(str, color)
 		local t = {text = str, color = color, showTime = 1000 * 5, id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
@@ -43,31 +42,13 @@ local filter = {
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 8000)
 		local rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly93d3cudHZwbHVzb25saW5lLnJ1L2FwaS9jaGFubmVscw')})
-			if rc ~= 200 then
-				m_simpleTV.Http.Close(session)
-			 return
-			end
+		m_simpleTV.Http.Close(session)
+			if rc ~= 200 then return end
 		answer = answer:gsub('%[%]', '')
 		answer = answer:gsub('\u0', '\\u0')
 		require 'json'
 		local tab = json.decode(answer)
 			if not tab then return end
-		local dvr
-		rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly93d3cudHZwbHVzb25saW5lLnJ1L3ZlcnNpb250di50eHQ')})
-		m_simpleTV.Http.Close(session)
-			if rc == 200 then
-				dvr = answer:match('dvr,([^%c]+)')
-			end
-		dvr = dvr or 'moscow24;kinopremier;kinohit;kinofamily;kinolove;kinoman;matchtvhd;boxtv;m1global;matchfighter;matchoursport;matchgamehd;matchgame;matcharenahd;matcharena;matchpremier;matchfootball1;matchfootball2;matchfootball3;khlhd;kinomix;nashenovoekino;rodnoekino;kinokomediya;indiankino;kinoseriya;kinouzas'
-		dvr = split(dvr, ';')
-			local function catchup(adr)
-				for i = 1, #dvr do
-					if adr == dvr[i] then
-					 return 'catchup="append" catchup-days="1" catchup-source=""'
-					end
-				end
-			 return
-			end
 		local t, i = {}, 1
 			for j = 1, #tab do
 				local title = tab[j].title
@@ -77,51 +58,10 @@ local filter = {
 					t[i] = {}
 					t[i].name = unescape1(title)
 					t[i].address = string.format('https://tv+hd.%s', adr)
-					t[i].RawM3UString = catchup(adr)
 					i = i + 1
 				end
 			end
 			if #t == 0 then return end
-		local plus = {
-				{'ntvp2', 'НТВ (+2)'},
-				{'ntvp4', 'НТВ (+4)'},
-				{'ntvp6', 'НТВ (+6)'},
-				{'perviyp2', 'Первый (+2)'},
-				{'perviyp4', 'Первый (+4)'},
-				{'perviyp6', 'Первый (+6)'},
-				{'renp2', 'РЕН ТВ (+2)'},
-				{'renp4', 'РЕН ТВ (+4)'},
-				{'renp6', 'РЕН ТВ (+6)'},
-				{'russiap2', 'Россия 1 (+2)'},
-				{'russiap4', 'Россия 1 (+4)'},
-				{'russiap6', 'Россия 1 (+6)'},
-				{'stsp2', 'СТС (+2)'},
-				{'stsp4', 'СТС (+4)'},
-				{'stsp6', 'СТС (+6)'},
-				{'tntp2', 'ТНТ (+2)'},
-				{'tntp4', 'ТНТ (+4)'},
-				{'tntp6', 'ТНТ (+6)'},
-				{'tv3p2', 'ТВ-3 (+2)'},
-				{'tv3p4', 'ТВ-3 (+4)'},
-				{'tv3p6', 'ТВ-3 (+6)'},
-				{'karuselp2', 'Карусель (+2)'},
-				{'karuselp4', 'Карусель (+4)'},
-				{'karuselp6', 'Карусель (+6)'},
-				{'centrtv', 'Центральное телевидение'},
-				{'fridayp2', 'Пятница! (+2)'},
-				{'fridayp4', 'Пятница! (+4)'},
-				{'fridayp6', 'Пятница! (+6)'},
-				{'stshd', 'СТС HD'},
-				{'renhd', 'РЕН ТВ HD'},
-				{'russia', 'Россия 1'},
-				{'tv3hd', 'ТВ-3 HD'},
-				{'bridgetvhd', 'Bridge TV Deluxe'},
-				{'perviy', 'Первый'},
-				{'fridayhd', 'Пятница! HD'},
-			}
-			for j = 1, #plus do
-				table.insert(t, {name = plus[j][2], address = string.format('https://tv+hd.%s', plus[j][1])})
-			end
 	 return t
 	end
 	function GetList(UpdateID, m3u_file)
@@ -131,11 +71,11 @@ local filter = {
 		local Source = TVSources_var.tmp.source[UpdateID]
 		local t_pls = LoadFromSite()
 			if not t_pls then
-				showMess(Source.name .. ' ошибка загрузки плейлиста', ARGB(255, 255, 102, 0))
+				showMsg(Source.name .. ' ошибка загрузки плейлиста', ARGB(255, 255, 102, 0))
 			 return
 			end
 		t_pls = ProcessFilterTableLocal(t_pls)
-		showMess(Source.name .. ' (' .. #t_pls .. ')', ARGB(255, 153, 255, 153))
+		showMsg(Source.name .. ' (' .. #t_pls .. ')', ARGB(255, 153, 255, 153))
 		local m3ustr = tvs_core.ProcessFilterTable(UpdateID, Source, t_pls)
 		local handle = io.open(m3u_file, 'w+')
 			if not handle then return end
