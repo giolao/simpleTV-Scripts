@@ -1,5 +1,7 @@
 -- скрапер TVS для загрузки плейлиста "Спорт" с сайта https://ntvplus.tv (5/7/19)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- ## необходим ##
+-- видоскрипт: sport.lua
 -- ## Переименовать каналы ##
 local filter = {
 	{'Телеканал КХЛ HD', 'КХЛ HD'},
