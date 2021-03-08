@@ -1,10 +1,10 @@
--- видеоскрипт для плейлиста "TV+ HD" http://www.tvplusonline.ru (6/3/21)
+-- видеоскрипт для плейлиста "TV+ HD" http://www.tvplusonline.ru (7/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: tv+hd_pls.lua
--- расширение дополнения httptimeshift: tvhd-timeshift_ext.lua
 -- ## открывает подобные ссылки ##
 -- https://tv+hd.perviyhd
+-- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://tv%+hd%.(%w+)') then return end
 	local inAdr = m_simpleTV.Control.CurrentAddress
