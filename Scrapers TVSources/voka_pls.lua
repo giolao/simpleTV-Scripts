@@ -1,6 +1,7 @@
--- скрапер TVS для загрузки плейлиста "voka" https://www.voka.tv (14/10/20)
+-- скрапер TVS для загрузки плейлиста "voka" https://www.voka.tv (7/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
--- необходим видоскрипт: voka
+-- ## необходим ##
+-- видоскрипт: voka.lua
 -- ## Беларусъ прокси ##
 local proxy = ''
 -- 'http://134.17.84.84:8080' -- (пример)
@@ -42,6 +43,10 @@ local filter = {
 	end
 	function GetVersion()
 	 return 2,'UTF-8'
+	end
+	local function showMsg(str, color)
+		local t = {text = str, color = color, showTime = 1000 * 5, id = 'channelName'}
+		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	local function LoadFromSite()
 		local userAgent = 'Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko) SamsungBrowser/9.2 TV Safari/605.1.15'
@@ -87,16 +92,10 @@ local filter = {
 		local Source = TVSources_var.tmp.source[UpdateID]
 		local t_pls = LoadFromSite()
 			if not t_pls then
-				m_simpleTV.OSD.ShowMessageT({text = Source.name .. ' - ошибка загрузки плейлиста'
-											, color = 0xffff6600
-											, showTime = 1000 * 5
-											, id = 'channelName'})
+				showMsg(Source.name .. ' ошибка загрузки плейлиста', ARGB(255, 255, 102, 0))
 			 return
 			end
-		m_simpleTV.OSD.ShowMessageT({text = Source.name .. ' (' .. #t_pls .. ')'
-									, color = 0xff99ff99
-									, showTime = 1000 * 5
-									, id = 'channelName'})
+		showMsg(Source.name .. ' (' .. #t_pls .. ')', ARGB(255, 153, 255, 153))
 		t_pls = ProcessFilterTableLocal(t_pls)
 		local m3ustr = tvs_core.ProcessFilterTable(UpdateID, Source, t_pls)
 		local handle = io.open(m3u_file, 'w+')
