@@ -53,7 +53,7 @@ local filter = {
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
-	local function showMess(str, color)
+	local function showMsg(str, color)
 		local t = {text = str, color = color, showTime = 1000 * 5, id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
@@ -155,11 +155,11 @@ local filter = {
 		}
 		local t_pls = wink_tv(w)
 			if not t_pls then
-				showMess(Source.name .. ' ошибка загрузки плейлиста', ARGB(255, 255, 102, 0))
+				showMsg(Source.name .. ' ошибка загрузки плейлиста', ARGB(255, 255, 102, 0))
 			 return
 			end
 		t_pls = ProcessFilterTableLocal(t_pls)
-		showMess(Source.name .. ' (' .. #t_pls .. ')', ARGB(255, 153, 255, 153))
+		showMsg(Source.name .. ' (' .. #t_pls .. ')', ARGB(255, 153, 255, 153))
 		local m3ustr = tvs_core.ProcessFilterTable(UpdateID, Source, t_pls)
 		local handle = io.open(m3u_file, 'w+')
 			if not handle then return end
