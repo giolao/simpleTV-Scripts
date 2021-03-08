@@ -1,5 +1,5 @@
 -- скрапер TVS для загрузки плейлиста "moreTV" https://more.tv (7/3/21)
--- Copyright © 2017-2020 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: mediavitrina.lua
 -- ## переименовать каналы ##
