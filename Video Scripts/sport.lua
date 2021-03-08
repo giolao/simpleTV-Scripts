@@ -2,8 +2,9 @@
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: sport_pls.lua
--- открывает подобные ссылки:
+-- ## открывает подобные ссылки ##
 -- http://sport.ntv/1040
+-- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^http://sport%.ntv/%d+$') then return end
 	local inAdr = m_simpleTV.Control.CurrentAddress
