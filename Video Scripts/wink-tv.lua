@@ -1,9 +1,9 @@
--- видеоскрипт для плейлиста "Wink TV" https://wink.rt.ru (12/1/21)
+-- видеоскрипт для плейлиста "Wink TV", РТ-ссылок https://wink.rt.ru (12/1/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- в архиве не переключает качество
 -- ## необходим ##
--- расширение дополнения httptimeshift: wink-tv-timeshift_ext.lua
 -- скрапер TVS: wink-tv_pls.lua
+-- расширение дополнения httptimeshift: wink-tv-timeshift_ext.lua
 -- ## открывает подобные ссылки ##
 -- https://zabava-htlive.cdn.ngenix.net/hls/CH_MATCHTVHD/variant.m3u8
 -- http://hlsstr03.svc.iptv.rt.ru/hls/CH_TNTHD/variant.m3u8
