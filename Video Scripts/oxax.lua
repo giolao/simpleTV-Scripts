@@ -1,5 +1,5 @@
 -- видеоскрипт для плейлиста "ОХ-АХ" http://oxax.tv (20/3/20)
--- Copyright © 2017-2020 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: oxax_pls.lua
 -- модуль: /core/playerjs.lua
