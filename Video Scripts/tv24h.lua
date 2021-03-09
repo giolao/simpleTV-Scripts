@@ -5,6 +5,7 @@
 -- расширение дополнения httptimeshift: tv24h-timeshift_ext.lua
 -- ## открывает подобные ссылки ##
 -- https://tv24h/10170/stream?access_token=60e7bd6049f70cfffe0dee01fff89569593128d5
+-- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://tv24h/%d') then return end
 	if m_simpleTV.Control.MainMode == 0 then
