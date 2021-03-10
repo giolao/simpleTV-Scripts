@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "pokazzTV" http://pokaz.me (7/3/21)
+-- скрапер TVS для загрузки плейлиста "pokazzTV" http://tv.pokaz.me (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: pokazzTV.lua
@@ -21,7 +21,6 @@ local filter = {
 	{'Fox live', 'Fox Life'},
 	}
 -- ##
-local site = 'http://tv.pokaz.me/'
 	module('pokazzTV_pls', package.seeall)
 	local my_src_name = 'pokazzTV'
 	local function ProcessFilterTableLocal(t)
@@ -47,12 +46,12 @@ local site = 'http://tv.pokaz.me/'
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	local function LoadFromSite()
-		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:83.0) Gecko/20100101 Firefox/83.0')
+		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 8000)
-		site = site:gsub('/$', '')
-		local t, i = {}, 1
-		local adr, title, url
+		local site = 'http://tv.pokaz.me'
+		local t = {}
+		local url
 		for x = 1, 4 do
 			if x == 1 then
 				url = site
@@ -64,17 +63,17 @@ local site = 'http://tv.pokaz.me/'
 			answer = answer:match('<section id="content">(.-)</div><div')
 				if not answer then break end
 			for w in answer:gmatch('<a(.-)</a>') do
-				adr = w:match('href="(.-)"')
-				title = w:match('title="(.-)"')
-					if not adr or not title then break end
-				t[i] = {}
-				t[i].name = title
-				t[i].address = adr
-				i = i + 1
+				local adr = w:match('href="([^"]+)')
+				local title = w:match('title="([^"]+)')
+				if adr and title then
+					t[#t + 1] = {}
+					t[#t].name = title
+					t[#t].address = adr
+				end
 			end
 		end
 		m_simpleTV.Http.Close(session)
-			if i == 1 then return end
+			if #t == 0 then return end
 	 return t
 	end
 	function GetList(UpdateID, m3u_file)
