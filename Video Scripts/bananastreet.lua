@@ -1,4 +1,4 @@
--- аудиоскрипт для сайта https://bananastreet.ru (6/9/20)
+-- аудиоскрипт для сайта https://bananastreet.ru (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://bananastreet.ru/74433-alex-hart-bolshaya-pop-vecherinka-vypusk-21
@@ -79,7 +79,7 @@
 		coverBig = 'https://bananastreet.ru' .. tab.data.cover.big.url
 	end
 	if m_simpleTV.Control.MainMode == 0 then
-		m_simpleTV.Control.ChangeChannelLogo('https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/bananastreet.png', m_simpleTV.Control.ChannelID)
+		m_simpleTV.Control.ChangeChannelLogo('https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/bananastreet.png', m_simpleTV.Control.ChannelID)
 	end
 	m_simpleTV.User.bananastreet.logo = coverBig or cover or ''
 	m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = m_simpleTV.User.bananastreet.logo, TypeBackColor = 0, UseLogo = 3, Once = 1})

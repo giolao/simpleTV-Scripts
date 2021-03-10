@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vimeo.com (2/11/20)
+-- видеоскрипт для сайта https://vimeo.com (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vimeo.com/channels/musicvideoland/368152561
@@ -16,7 +16,7 @@
 	m_simpleTV.Control.CurrentAddress = 'error'
 	if not inAdr:match('player%.vimeo%.com/') then
 		if m_simpleTV.Control.MainMode == 0 then
-			m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = 'https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/vimeo.png', UseLogo = 1, Once = 1})
+			m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = 'https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/vimeo.png', UseLogo = 1, Once = 1})
 		end
 	end
 	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:81.0) Gecko/20100101 Firefox/81.0'

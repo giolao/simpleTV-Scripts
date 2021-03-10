@@ -1,4 +1,4 @@
--- видеоскрипт для сайта http://www.kinopoisk.ru (7/3/21)
+-- видеоскрипт для сайта http://www.kinopoisk.ru (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: yandex-vod.lua, kodik.lua, filmix.lua, videoframe.lua, seasonvar.lua
@@ -514,7 +514,7 @@ local tname = {
 			t.defButton = 'Yes'
 			local but = m_simpleTV.Interface.MessageBoxT(t)
 			if but == 'Yes' then
-				m_simpleTV.Interface.OpenLink('https://github.com/Nexterr/simpleTV-scripts/tree/master/videoscripts')
+				m_simpleTV.Interface.OpenLink('https://github.com/Nexterr-origin/simpleTV-Scripts/tree/main/Video%20Scripts')
 			end
 		 return
 		end

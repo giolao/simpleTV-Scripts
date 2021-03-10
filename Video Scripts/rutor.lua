@@ -1,4 +1,4 @@
--- видеоскрипт для сайта http://rutor.info (6/9/20)
+-- видеоскрипт для сайта http://rutor.info (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- Acestream
@@ -39,7 +39,7 @@ local proxy = ''
 			if not index or (m_simpleTV.User.rutor.id
 				and m_simpleTV.User.rutor.id ~= inAdr:match('%d+'))
 			then
-				m_simpleTV.User.rutor.posterUrl = 'https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/rutor.png'
+				m_simpleTV.User.rutor.posterUrl = 'https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/rutor.png'
 				m_simpleTV.User.rutor.title = nil
 			end
 			if m_simpleTV.Control.ChannelID == 268435455 then
@@ -50,7 +50,7 @@ local proxy = ''
 				m_simpleTV.Control.CurrentTitle_UTF8 = title
 			end
 			if m_simpleTV.Control.MainMode == 0 then
-				m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = (m_simpleTV.User.rutor.posterUrl or 'https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/rutor.png'), TypeBackColor = 0, UseLogo = 3, Once = 1})
+				m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = (m_simpleTV.User.rutor.posterUrl or 'https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/rutor.png'), TypeBackColor = 0, UseLogo = 3, Once = 1})
 			end
 			m_simpleTV.Control.CurrentAddress = inAdr .. '$OPT:POSITIONTOCONTINUE=0'
 		 return
@@ -109,7 +109,7 @@ local proxy = ''
 			adr = 'https://st.kp.yandex.net/images/film_iphone/iphone360_' .. adr .. '.jpg'
 		end
 	end
-	adr = adr or 'https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/rutor.png'
+	adr = adr or 'https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/rutor.png'
 	m_simpleTV.User.rutor.posterUrl = adr
 	if m_simpleTV.Control.MainMode == 0 then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = adr, TypeBackColor = 0, UseLogo = 3, Once = 1})

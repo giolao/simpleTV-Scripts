@@ -1,4 +1,4 @@
--- видеоскрипт для сайта http://rutracker.org (6/9/20)
+-- видеоскрипт для сайта http://rutracker.org (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- Acestream
@@ -16,7 +16,7 @@ local proxy = ''
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://rutracker%..-/forum/') then return end
 	m_simpleTV.OSD.ShowMessageT({text = '', showTime = 1000, id = 'channelName'})
 	if m_simpleTV.Control.MainMode == 0 then
-		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = 'https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/rutracker.png', UseLogo = 1, Once = 1})
+		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = 'https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/rutracker.png', UseLogo = 1, Once = 1})
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	local function showError(str)
@@ -56,7 +56,7 @@ local proxy = ''
 		 return
 		end
 	if m_simpleTV.Control.MainMode == 0 then
-		m_simpleTV.Control.ChangeChannelLogo('https://raw.githubusercontent.com/Nexterr/simpleTV.img/master/rutracker.png', m_simpleTV.Control.ChannelID)
+		m_simpleTV.Control.ChangeChannelLogo('https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/rutracker.png', m_simpleTV.Control.ChannelID)
 	end
 	m_simpleTV.Control.CurrentTitle_UTF8 = 'rutracker_'
 	m_simpleTV.Control.CurrentAddress = 'torrent://' .. answer
