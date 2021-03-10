@@ -14,8 +14,9 @@
 -- https://hd.kinopoisk.ru/film/456c0edc4049d31da56036a9ae1484f4
 -- http://rating.kinopoisk.ru/7378.gif
 -- https://www.kinopoisk.ru/series/733493/
--- ## адрес сайта (зеркала) filmix.co ##
-local filmixsite = 'https://filmix.wiki'
+-- ## зеркало filmix.co ##
+local filmixsite = 'https://filmix.ac'
+-- '' - по умолч.
 -- 'https://filmix.life' (пример)
 -- ## прокси для Seasonvar ##
 local proxy = ''
@@ -34,7 +35,7 @@ local tname = {
 	'Collaps',
 	'Hdvb',
 	'Seasonvar',
-	'CDN Movies',
+	-- 'CDN Movies',
 	'ZonaMobi',
 	}
 -- ##

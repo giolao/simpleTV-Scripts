@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://filmix.co (8/1/21)
+-- видеоскрипт для сайта https://filmix.co (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## авторизация ##
 -- логин, пароль установить в 'Password Manager', для id - filmix
@@ -13,7 +13,7 @@
 -- https://filmix.co/download/5409
 -- https://filmix.co/download/35895
 -- ## зеркало ##
-local zer = 'https://filmix.wiki'
+local zer = 'https://filmix.ac'
 -- '' - нет
 -- 'https://filmix.life' - (пример)
 -- ##
