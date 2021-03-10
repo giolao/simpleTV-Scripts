@@ -14,7 +14,7 @@
 -- https://hd.kinopoisk.ru/film/456c0edc4049d31da56036a9ae1484f4
 -- http://rating.kinopoisk.ru/7378.gif
 -- https://www.kinopoisk.ru/series/733493/
--- ## зеркало filmix.co ##
+-- ## сайт (зеркало) filmix.co ##
 local filmixsite = 'https://filmix.ac'
 -- '' - по умолч.
 -- 'https://filmix.life' (пример)
