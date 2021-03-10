@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Витрина ТВ" https://wink.rt.ru (10/3/21)
+-- видеоскрипт для плейлиста "Витрина ТВ" https://www.vitrina.tv (10/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: mediavitrina_pls.lua
