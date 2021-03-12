@@ -25,10 +25,6 @@ local filter = {
 	function GetVersion()
 	 return 2, 'UTF-8'
 	end
-	local function showMsg(str, color)
-		local t = {text = str, color = color, showTime = 1000 * 5, id = 'channelName'}
-		m_simpleTV.OSD.ShowMessageT(t)
-	end
 	function GetList(UpdateID, m3u_file)
 			if not UpdateID then return end
 			if not m3u_file then return end
@@ -49,12 +45,26 @@ local filter = {
 				t_pls[i].name = t_pls[i].name:gsub('EPG %| ', '')
 				if t_pls[i].group == 'CBC TV Canada (Geo)'
 					or t_pls[i].group == 'ICI Tele Canada (Geo)'
+					or t_pls[i].name:match('Geo%-CA')
 				then
 					t_pls[i].address = t_pls[i].address .. '$OPT:http-ext-header=X-Forwarded-For:216.58.15.5'
 				end
+				if t_pls[i].group == 'About Us + Extras'
+					or t_pls[i].group:match('Free2View')
+					or t_pls[i].group:match('Geo%-USA')
+					or t_pls[i].group:match('^Info')
+					or t_pls[i].group:match('%| VOD')
+					or t_pls[i].group:match('Radio')
+					or t_pls[i].group:match('RADIO')
+					or t_pls[i].address:match('%.mp4$')
+					or t_pls[i].name:match('^%*%*')
+					or t_pls[i].name:match('Geo%-USA')
+					or t_pls[i].name:match('Geo%-AU')
+				then
+					t_pls[i].skip = true
+				end
 			end
 		t_pls = ProcessFilterTableLocal(t_pls)
-		showMsg(Source.name .. ' (' .. #t_pls .. ')', ARGB(255, 153, 255, 153))
 		local m3ustr = tvs_core.ProcessFilterTable(UpdateID, Source, t_pls)
 		local handle = io.open(m3u_file, 'w+')
 			if not handle then return end
