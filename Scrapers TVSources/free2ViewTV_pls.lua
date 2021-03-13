@@ -45,7 +45,9 @@ local filter = {
 				t_pls[i].name = t_pls[i].name:gsub('EPG %| ', '')
 				if t_pls[i].group == 'CBC TV Canada (Geo)'
 					or t_pls[i].group == 'ICI Tele Canada (Geo)'
-					or t_pls[i].name:match('Geo%-CA')
+					or ((t_pls[i].name:match('Geo%-CA')
+						or t_pls[i].name:match('Canada'))
+						and t_pls[i].address:match('%.akamai'))
 				then
 					t_pls[i].address = t_pls[i].address .. '$OPT:http-ext-header=X-Forwarded-For:216.58.15.5'
 				end
