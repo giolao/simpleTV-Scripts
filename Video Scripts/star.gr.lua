@@ -1,9 +1,10 @@
 -- видеоскрипт для сайта https://www.star.gr (12/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
--- открывает подобные ссылки:
+-- ## открывает подобные ссылки ##
 -- https://www.star.gr/lifestyle/celebrities/535875/elenh-menegakh-pozarei-me-dermatino-synolo
 -- https://www.star.gr/tv/live-stream/
 -- https://www.star.gr/video/masterchef=535853
+-- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://www%.star%.gr') then return end
 	local inAdr = m_simpleTV.Control.CurrentAddress

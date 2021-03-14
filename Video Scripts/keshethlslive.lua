@@ -1,7 +1,8 @@
 -- видеоскрипт для сайта https://www.mako.co.il (18/1/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
--- открывает ссылку:
+-- ## открывает ссылку ##
 -- https://www.mako.co.il/keshethlslive
+-- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https://www%.mako%.co%.il/keshethlslive') then return end
 	if m_simpleTV.Control.MainMode == 0 then
