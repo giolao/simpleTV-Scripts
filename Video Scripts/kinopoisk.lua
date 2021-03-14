@@ -1,4 +1,4 @@
--- видеоскрипт для сайта http://www.kinopoisk.ru (10/3/21)
+-- видеоскрипт для сайта http://www.kinopoisk.ru (12/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: yandex-vod.lua, kodik.lua, filmix.lua, videoframe.lua, seasonvar.lua
@@ -14,8 +14,8 @@
 -- https://hd.kinopoisk.ru/film/456c0edc4049d31da56036a9ae1484f4
 -- http://rating.kinopoisk.ru/7378.gif
 -- https://www.kinopoisk.ru/series/733493/
--- ## сайт (зеркало) filmix.co ##
-local filmixsite = 'https://filmix.ac'
+-- ## сайт (зеркало) filmix.ac ##
+local filmixsite = 'https://filmix.life'
 -- '' - по умолч.
 -- 'https://filmix.life' (пример)
 -- ## прокси для Seasonvar ##
@@ -393,7 +393,7 @@ local tname = {
 			elseif tname[i] == 'ZonaMobi' then
 				turl[i] = {adr = decode64('em9uYXNlYXJjaC5jb20vc29sci9tb3ZpZQ=='), tTitle = 'Фильмы и сериалы с Zona.mobi', tLogo = 'http://zona-sait.ru/wp-content/uploads/2017/11/logo.png'}
 			elseif tname[i] == 'Filmix' then
-				turl[i] = {adr = filmixsite .. decode64('L2VuZ2luZS9hamF4L3NwaGlueF9zZWFyY2gucGhw'), tTitle = 'Фильмы и сериалы с Filmix.co', tLogo = logo_k}
+				turl[i] = {adr = filmixsite .. decode64('L2VuZ2luZS9hamF4L3NwaGlueF9zZWFyY2gucGhw'), tTitle = 'Фильмы и сериалы с filmix.ac', tLogo = logo_k}
 			elseif tname[i] == 'Seasonvar' then
 				turl[i] = {adr = decode64('aHR0cDovL3NlYXNvbnZhci5ydS9hdXRvY29tcGxldGUucGhwP3F1ZXJ5PQ=='), tTitle = 'Сериалы с Seasonvar.ru', tLogo = 'http://hostingkartinok.com/uploads/images/2011/09/af3d6033d255a3e36a6094a5ba74ebb7.png'}
 			elseif tname[i] == 'ivi' then
