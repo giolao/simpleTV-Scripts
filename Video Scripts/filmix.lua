@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://filmix.co (10/3/21)
+-- видеоскрипт для сайта https://filmix.ac (12/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## авторизация ##
 -- логин, пароль установить в 'Password Manager', для id - filmix
@@ -6,14 +6,14 @@
 -- модуль: /core/playerjs.lua
 -- AceStream
 -- ## открывает подобные ссылки ##
--- https://filmix.co/semejnyj/103212-odin-doma-2-zateryannyy-v-nyu-yorke-1992.html
--- https://filmix.co/play/112056
--- https://filmix.co/fantastika/113095-puteshestvenniki-2016.html
--- https://filmix.co/download-file/55308
--- https://filmix.co/download/5409
--- https://filmix.co/download/35895
+-- https://filmix.ac/semejnyj/103212-odin-doma-2-zateryannyy-v-nyu-yorke-1992.html
+-- https://filmix.ac/play/112056
+-- https://filmix.ac/fantastika/113095-puteshestvenniki-2016.html
+-- https://filmix.ac/download-file/55308
+-- https://filmix.ac/download/5409
+-- https://filmix.ac/download/35895
 -- ## зеркало ##
-local zer = 'https://filmix.ac'
+local zer = 'https://filmix.life'
 -- '' - нет
 -- 'https://filmix.life' - (пример)
 -- ##
@@ -28,9 +28,9 @@ local zer = 'https://filmix.ac'
 	require 'json'
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	m_simpleTV.OSD.ShowMessageT({text = '', showTime = 1000, id = 'channelName'})
-	local logo = 'https://filmix.co/templates/Filmix/media/img/svg/logo.svg'
+	local logo = 'https://filmix.ac/templates/Filmix/media/img/svg/logo.svg'
 	if zer ~= '' then
-		logo = logo:gsub('https://filmix.co', zer)
+		logo = logo:gsub('https://filmix.ac', zer)
 	end
 	if inAdr:match('^%$filmixnet') then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = '', TypeBackColor = 0, UseLogo = 0, Once = 1})
