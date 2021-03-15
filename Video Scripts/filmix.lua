@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://filmix.ac (12/3/21)
+-- видеоскрипт для сайта https://filmix.ac (15/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## авторизация ##
 -- логин, пароль установить в 'Password Manager', для id - filmix
@@ -261,7 +261,7 @@ local zer = 'https://filmix.life'
 		 return
 		end
 	inAdr = inAdr:gsub('&kinopoisk', '')
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3809.87 Safari/537.36')
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
 		if not session then
 			showError('5')
 		 return
@@ -287,9 +287,6 @@ local zer = 'https://filmix.life'
 			url = host .. 'engine/ajax/user_auth.php'
 		end
 		local rc, answer = m_simpleTV.Http.Request(session, {body = 'login_name=' .. url_encode(login) .. '&login_password=' .. url_encode(password) .. '&login=submit', url = url, method = 'post', headers = 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8\nX-Requested-With: XMLHttpRequest\nReferer: ' .. host})
-		if rc == 200 and not answer:match('AUTHORIZED') and host:match('filmix%.co') then
-			showError('7\nНеправильный логин или пароль')
-		end
 	end
 	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 		if rc ~= 200 then
