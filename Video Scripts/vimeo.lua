@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vimeo.com (10/3/21)
+-- видеоскрипт для сайта https://vimeo.com/watch (15/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vimeo.com/channels/musicvideoland/368152561
@@ -7,114 +7,64 @@
 -- https://vimeo.com/2196013
 -- https://player.vimeo.com/video/344303837?wmode=transparent$OPT:http-referrer=https://www.clubbingtv.com/video/play/4194/live-dj-set-with-dan-lo/
 -- https://vimeo.com/27945056
+-- https://vimeo.com/512309078/4c76d1b3fd
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://[%a%.]*vimeo%.com/.+') then return end
-	local urlAdr = m_simpleTV.Control.CurrentAddress
-	local inAdr = urlAdr:gsub('%$OPT:.-$', '')
+	local inAdr = m_simpleTV.Control.CurrentAddress
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	if not inAdr:match('player%.vimeo%.com/') then
+	if not inAdr:match('player%.vimeo%.com') then
 		if m_simpleTV.Control.MainMode == 0 then
+			m_simpleTV.OSD.ShowMessageT({text = '', showTime = 1000, id = 'channelName'})
 			m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = 'https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/vimeo.png', UseLogo = 1, Once = 1})
 		end
 	end
-	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:81.0) Gecko/20100101 Firefox/81.0'
 	local function showError(str)
-		m_simpleTV.OSD.ShowMessageT({text = 'vimeo ошибка: ' .. str, showTime = 1000 * 5, color = 0xffff1000, id = 'vimeo'})
+		m_simpleTV.OSD.ShowMessageT({text = 'vimeo ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'vimeo'})
 	end
-	local id = inAdr:match('vimeo%.com/(%d+)') or inAdr:match('/video/(%d+)') or inAdr:match('/channels/.-/(%d+)')
+	local id = inAdr:match('/(%d+/?%w+)')
 		if not id then
-			showError('1')
+			showError('not found \'id\' in url')
 		 return
 		end
-	local session = m_simpleTV.Http.New(userAgent)
-		if not session then
-			showError('2')
-		 return
-		end
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
+		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
-	if not m_simpleTV.User then
-		m_simpleTV.User = {}
-	end
-	if not m_simpleTV.User.vimeo then
-		m_simpleTV.User.vimeo = {}
-	end
-	local function Thumbs(tab)
-			if m_simpleTV.Control.MainMode ~= 0 then return end
-		m_simpleTV.User.vimeo.ThumbsInfo = nil
-			if not tab.request.thumb_preview
-				or not tab.request.thumb_preview.url
-				or not tab.request.thumb_preview.frame_width
-				or not tab.request.thumb_preview.frame_height
-				or not tab.video.duration
-			then
-			 return
-			end
-		m_simpleTV.User.vimeo.ThumbsInfo = {}
-		m_simpleTV.User.vimeo.ThumbsInfo.duration = tab.video.duration
-		m_simpleTV.User.vimeo.ThumbsInfo.urlPattern = tab.request.thumb_preview.url
-		m_simpleTV.User.vimeo.ThumbsInfo.thumbHeight = tab.request.thumb_preview.frame_height
-		m_simpleTV.User.vimeo.ThumbsInfo.thumbWidth = tab.request.thumb_preview.frame_width
-		if not m_simpleTV.User.vimeo.PositionThumbsHandler then
-			local handlerInfo = {}
-			handlerInfo.luaFunction = 'PositionThumbs_vimeo'
-			handlerInfo.regexString = '//vimeo\.com/.*'
-			handlerInfo.sizeFactor = 0.18
-			handlerInfo.backColor = 0xf0000000
-			handlerInfo.glowParams = 'glow="7" samples="5" extent="4" color="0xB0000000"'
-			handlerInfo.minImageWidth = 80
-			handlerInfo.minImageHeight = 45
-			m_simpleTV.User.vimeo.PositionThumbsHandler = m_simpleTV.PositionThumbs.AddHandler(handlerInfo)
-		end
-	end
-	function PositionThumbs_vimeo(queryType, address, forTime)
-		if queryType == 'testAddress' then
-		 return false
-		end
-		if queryType == 'getThumbs' then
-				if not m_simpleTV.User.vimeo.ThumbsInfo then
-				 return true
-				end
-			local t = {}
-			t.playAddress = address
-			t.url = m_simpleTV.User.vimeo.ThumbsInfo.urlPattern
-			t.httpParams = {}
-			t.httpParams.userAgent = userAgent
-			t.httpParams.extHeader = 'Referer: ' .. address
-			t.elementWidth = m_simpleTV.User.vimeo.ThumbsInfo.thumbWidth
-			t.elementHeight = m_simpleTV.User.vimeo.ThumbsInfo.thumbHeight
-			t.startTime = 0
-			t.length = m_simpleTV.User.vimeo.ThumbsInfo.duration * 1000
-			m_simpleTV.PositionThumbs.AppendThumb(t)
-		 return true
-		end
-	end
 	function vimeoSaveQuality(obj, id)
 		m_simpleTV.Config.SetValue('vimeo_qlty', id)
 	end
-	local headers = 'Referer: ' .. (urlAdr:match('$OPT:http%-referrer=(.+)') or inAdr)
-	local rc, answer, config_url
+	local function getConfig_url()
+		local rc, answer = m_simpleTV.Http.Request(session, {url = 'https://vimeo.com/_rv/viewer'})
+			if rc ~= 200 then return end
+		local jwt = answer:match('"jwt":"([^"]+)')
+			if rc ~= 200 then return end
+		id = id:gsub('/', ':')
+		local url = 'https://api.vimeo.com/videos/' .. id .. '?fields=embed_player_config_url'
+		local headers = 'Content-Type: application/json\nOrigin: https://vimeo.com\nReferer: '
+				.. inAdr
+				.. '\nAuthorization: jwt ' .. jwt
+		rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = headers})
+			if rc ~= 200 then return end
+		local config_url = answer:match('config_url":%s*"([^"]+)')
+	 return config_url, headers
+	end
+	local config_url, headers
 	if not inAdr:match('player%.vimeo%.com/') then
-		rc, answer = m_simpleTV.Http.Request(session, {url = inAdr, headers = headers})
-			if rc ~= 200 then
+		config_url, headers = getConfig_url()
+		if not config_url or not headers then
 				m_simpleTV.Http.Close(session)
-				showError('3 - ' .. rc)
+				showError('1')
 			 return
 			end
-		config_url = answer:match('"config_url":"([^"]+)') or answer:match('data%-config%-url="([^"]+)')
-			if not config_url then
-				showError('4')
-			 return
-			end
-		config_url = config_url:gsub('\\/', '/'):gsub('&amp;', '&')
 	else
 		config_url = 'https://player.vimeo.com/video/' .. id .. '/config'
+		headers = 'Referer: ' .. (inAdr:match('$OPT:http%-referrer=(.+)') or inAdr)
 	end
-	rc, answer = m_simpleTV.Http.Request(session, {url = config_url, headers = headers})
+	local rc, answer = m_simpleTV.Http.Request(session, {url = config_url, headers = headers})
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then
-			showError('5 - ' .. rc)
+			showError('2')
 		 return
 		end
 	answer = answer:gsub('\\', '\\\\')
@@ -130,7 +80,7 @@
 			or not tab.request.files
 			or not tab.request.files.progressive
 		then
-			showError('6')
+			showError('3')
 		 return
 		end
 	local title = tab.video.title
@@ -153,19 +103,17 @@
 			title = addTitle .. ' - ' .. title
 		end
 	end
-	local referer = tab.request.referrer or inAdr
-	local extOpt = '$OPT:NO-STIMESHIFT$OPT:http-user-agent=' .. userAgent .. '$OPT:http-referrer=' .. referer
 	local t, i = {}, 1
 		while true do
 				if not tab.request.files.progressive[i] then break end
 			t[i] = {}
 			t[i].Id = tab.request.files.progressive[i].height
 			t[i].Name = tab.request.files.progressive[i].quality
-			t[i].Address = tab.request.files.progressive[i].url:gsub('%?.-$', '') .. extOpt
+			t[i].Address = tab.request.files.progressive[i].url:gsub('%?.-$', '') .. '$OPT:NO-STIMESHIFT'
 			i = i + 1
 		end
-		if i == 1 then
-			showError('7')
+		if #t == 0 then
+			showError('4')
 		 return
 		end
 	table.sort(t, function(a, b) return a.Id < b.Id end)
@@ -198,5 +146,4 @@
 	if not inAdr:match('player%.vimeo%.com/') then
 		m_simpleTV.Control.CurrentTitle_UTF8 = title
 	end
-	Thumbs(tab)
 -- debug_in_file(t[index].Address .. '\n')
