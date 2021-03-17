@@ -1,3 +1,6 @@
+<p align="right">
+ <a title="english" href="./README-EN.md"><img src="../../../simpleTV-images/blob/main/gb.png?raw=true" alt="english" /> </a><strong><sup><sub>EN</sub></sup></strong>
+</p>
 
 [![script YT][badge-yt]][YT]
 [![script addons][badge-addons]][addons]
