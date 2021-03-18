@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (18/3/21)
+-- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (19/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## Переименовать каналы ##
 local filter = {
@@ -38,7 +38,7 @@ local filter = {
 				m_simpleTV.Http.Close(session)
 			 return
 			end
-			local function getTbl(t, group, answer)
+			local function getTbl(t, group, answer, group_logo)
 					for w in answer:gmatch('#EXTINF:.-\n.-\n') do
 						local title = w:match(',(.-)\n')
 						local url = w:match('\n(.-)\n')
@@ -48,23 +48,28 @@ local filter = {
 							t[#t].address = url .. (title:match('$OPT:.+') or '')
 							t[#t].logo = w:match('tvg%-logo="([^"]+)')
 							t[#t].group = group
+							t[#t].group_logo = group_logo
+							t[#t].group_is_unique = 1
 						end
 					end
 			 return t
 			end
 		m_simpleTV.OSD.ShowMessageT({text = my_src_name .. ', загрузка ...', showTime = 1000 * 60, color = ARGB(255, 153, 255, 153), id = 'channelName', once = true})
+		answer = answer:match('"left">Country<.-</table>')
+			if not answer then return end
 		local t = {}
-			for w in answer:gmatch('</g%-emoji>.-</code>') do
+			for w in answer:gmatch('<tr>.-</tr>') do
 				local adr = w:match('<code>([^<]+)')
-				local group = w:match('>([^<]+)')
-				if adr and group then
+				if adr then
 					local rc, answer = m_simpleTV.Http.Request(session, {url = adr})
 					if rc == 200 then
+						local group_logo = w:match('fallback%-src="([^"<]+)')
+						local group = w:match('</g%-emoji>([^<]+)') or 'Undefined'
 						group = group:gsub('amp;', '')
 						group = group:upper()
 						answer = string.gsub(answer, '(".-")', function(c) return c:gsub(',', '%%2C') end)
 						answer = answer:gsub('\n#EXTVLC', '$')
-						t = getTbl(t, group, answer)
+						t = getTbl(t, group, answer, group_logo)
 					end
 				end
 			end
