@@ -22,12 +22,13 @@
 
 ---
 
+
+
+📌 **Installation**
+ - video scripts to folder _`..\luaScr\user\video`_
+ - scrapers [TVSources][TVSources] to folder _`..\luaScr\user\TVSources\AutoSetup`_
+
 <!---
-
-📌 **Установка**
- - видео скрипты в папку _`..\luaScr\user\video`_
- - скраперы [TVSources][TVSources] в папку _`..\luaScr\user\TVSources\AutoSetup`_
-
 📌 **В некоторых скриптах возможно указать**
  - прокси/зеркало
  - различные параметры
