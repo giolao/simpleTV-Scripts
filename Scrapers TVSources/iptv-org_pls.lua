@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (12/3/21)
+-- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (18/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## Переименовать каналы ##
 local filter = {
@@ -40,14 +40,14 @@ local filter = {
 			end
 			local function getTbl(t, group, answer)
 					for w in answer:gmatch('#EXTINF:.-\n.-\n') do
-						local title = w:match('.+,(.-)\n')
+						local title = w:match(',(.-)\n')
 						local url = w:match('\n(.-)\n')
 						if title and url then
 							t[#t + 1] = {}
-							t[#t].address = url
+							t[#t].name = title:gsub('$OPT:.+', ''):gsub('%(1080p%)', 'HD')
+							t[#t].address = url .. (title:match('$OPT:.+') or '')
 							t[#t].logo = w:match('tvg%-logo="([^"]+)')
 							t[#t].group = group
-							t[#t].name = title
 						end
 					end
 			 return t
@@ -62,7 +62,8 @@ local filter = {
 					if rc == 200 then
 						group = group:gsub('amp;', '')
 						group = group:upper()
-						answer = answer:gsub('#EXTVLCOPT.-\n', '')
+						answer = string.gsub(answer, '(".-")', function(c) return c:gsub(',', '%%2C') end)
+						answer = answer:gsub('\n#EXTVLC', '$')
 						t = getTbl(t, group, answer)
 					end
 				end
