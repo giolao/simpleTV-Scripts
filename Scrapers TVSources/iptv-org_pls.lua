@@ -29,6 +29,9 @@ local filter = {
 		local t = {text = str, showTime = 1000 * 5, color = color, id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
+	local function trim(s)
+	 return s:gsub('^%s*(.-)%s*$', '%1')
+	end
 	local function LoadFromSite()
 		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
 			if not session then return end
@@ -45,11 +48,16 @@ local filter = {
 						if title and url then
 							t[#t + 1] = {}
 							t[#t].name = title:gsub('$OPT:.+', ''):gsub('%(1080p%)', 'HD')
-							t[#t].address = url .. (title:match('$OPT:.+') or '')
 							t[#t].logo = w:match('tvg%-logo="([^"]+)')
 							t[#t].group = group
 							t[#t].group_logo = group_logo
 							t[#t].group_is_unique = 1
+							if group:match('GERMANY')
+								and url:match('%.akamai')
+							then
+								url = url .. '$OPT:http-ext-header=X-Forwarded-For:157.90.148.138'
+							end
+							t[#t].address = url .. (title:match('$OPT:.+') or '')
 						end
 					end
 			 return t
