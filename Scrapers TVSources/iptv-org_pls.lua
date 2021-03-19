@@ -52,6 +52,7 @@ local filter = {
 							t[#t].group = group
 							t[#t].group_logo = group_logo
 							t[#t].group_is_unique = 1
+							t[#t].group_logo_force = 1
 							if group:match('GERMANY')
 								and url:match('%.akamai')
 							then
