@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://vimeo.com/watch (15/3/21)
+-- видеоскрипт для сайта https://vimeo.com/watch (20/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://vimeo.com/channels/musicvideoland/368152561
@@ -8,6 +8,7 @@
 -- https://player.vimeo.com/video/344303837?wmode=transparent$OPT:http-referrer=https://www.clubbingtv.com/video/play/4194/live-dj-set-with-dan-lo/
 -- https://vimeo.com/27945056
 -- https://vimeo.com/512309078/4c76d1b3fd
+-- https://vimeo.com/showcase/3717822/video/329792082
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://[%a%.]*vimeo%.com/.+') then return end
@@ -23,7 +24,7 @@
 	local function showError(str)
 		m_simpleTV.OSD.ShowMessageT({text = 'vimeo ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'vimeo'})
 	end
-	local id = inAdr:match('/(%d+/?%w+)')
+	local id = inAdr:match('/video/(%d+)') or inAdr:match('/(%d+/?%x+)')
 		if not id then
 			showError('not found \'id\' in url')
 		 return
@@ -62,8 +63,8 @@
 		headers = 'Referer: ' .. (inAdr:match('$OPT:http%-referrer=(.+)') or inAdr)
 	end
 	local rc, answer = m_simpleTV.Http.Request(session, {url = config_url, headers = headers})
-	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then
+			m_simpleTV.Http.Close(session)
 			showError('2')
 		 return
 		end
@@ -78,7 +79,6 @@
 			or not tab.video
 			or not tab.request
 			or not tab.request.files
-			or not tab.request.files.progressive
 		then
 			showError('3')
 		 return
@@ -104,16 +104,56 @@
 		end
 	end
 	local t, i = {}, 1
-		while true do
-				if not tab.request.files.progressive[i] then break end
-			t[i] = {}
-			t[i].Id = tab.request.files.progressive[i].height
-			t[i].Name = tab.request.files.progressive[i].quality
-			t[i].Address = tab.request.files.progressive[i].url:gsub('%?.-$', '') .. '$OPT:NO-STIMESHIFT'
-			i = i + 1
-		end
+	if tab.request.files.progressive then
+			while true do
+					if not tab.request.files.progressive[i] then break end
+				t[i] = {}
+				t[i].Id = tab.request.files.progressive[i].height
+				t[i].Name = tab.request.files.progressive[i].quality
+				t[i].Address = tab.request.files.progressive[i].url:gsub('%?.-$', '') .. '$OPT:NO-STIMESHIFT'
+				i = i + 1
+			end
+	elseif tab.request.files.hls
+		and tab.request.files.hls.cdns
+		and tab.request.files.hls.cdns.akamai_live
+		and tab.request.files.hls.cdns.akamai_live.json_url
+	then
+		local url = tab.request.files.hls.cdns.akamai_live.json_url
+		local rc, answer = m_simpleTV.Http.Request(session, {url = url})
+			if rc ~= 200 then
+				m_simpleTV.Http.Close(session)
+				showError('4')
+			 return
+			end
+		url = answer:match('"url":"([^"]+)')
+			if not url then
+				showError('4.1')
+			 return
+			end
+		local rc, answer = m_simpleTV.Http.Request(session, {url = url})
+			if rc ~= 200 then
+				m_simpleTV.Http.Close(session)
+				showError('4.2')
+			 return
+			end
+		local base = url:match('.+/')
+			for w in answer:gmatch('EXT%-X%-STREAM%-INF.-\n.-\n') do
+				local adr = w:match('\n(.-)\n')
+				local name = w:match('RESOLUTION=%d+x(%d+)')
+				if adr and name then
+					if not adr:match('^http') then
+						adr = base .. adr
+					end
+					t[#t + 1] = {}
+					t[#t].Id = tonumber(name)
+					t[#t].Name = name .. 'p'
+					t[#t].Address = adr
+				end
+			end
+	end
+	m_simpleTV.Http.Close(session)
 		if #t == 0 then
-			showError('4')
+			showError('5')
 		 return
 		end
 	table.sort(t, function(a, b) return a.Id < b.Id end)
