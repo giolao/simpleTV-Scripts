@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (19/3/21)
+-- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (20/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## Переименовать каналы ##
 local filter = {
@@ -29,9 +29,6 @@ local filter = {
 		local t = {text = str, showTime = 1000 * 5, color = color, id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
-	local function trim(s)
-	 return s:gsub('^%s*(.-)%s*$', '%1')
-	end
 	local function LoadFromSite()
 		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
 			if not session then return end
@@ -52,7 +49,7 @@ local filter = {
 							t[#t].group = group
 							t[#t].group_logo = group_logo
 							t[#t].group_is_unique = 0
-							t[#t].group_logo_force = 0
+							t[#t].group_logo_force = 1
 							if group:match('GERMANY')
 								and url:match('%.akamai')
 							then
