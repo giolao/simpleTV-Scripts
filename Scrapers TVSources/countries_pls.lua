@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Countries" https://github.com/Free-IPTV/Countries (19/3/21)
+-- скрапер TVS для загрузки плейлиста "Countries" https://github.com/Free-IPTV/Countries (20/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## Переименовать каналы ##
 local filter = {
@@ -289,6 +289,8 @@ local filter = {
 			for i = 1, #t_pls do
 				t_pls[i].group = t_pls[i].group:upper()
 				t_pls[i].group_logo = flags(t_pls[i].group)
+				t_pls[i].group_is_unique = 0
+				t_pls[i].group_logo_force = 1
 				t_pls[i].name = t_pls[i].name:gsub('[%s%-]*github%.com/Free%-IPTV', '')
 				if t_pls[i].address == 'https://'
 					or t_pls[i].address == 'http://'
