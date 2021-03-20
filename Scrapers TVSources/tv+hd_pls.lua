@@ -52,7 +52,13 @@ local filter = {
 		require 'json'
 		local tab = json.decode(answer)
 			if not tab then return end
-		local dvr = 'moscow24;kinopremier;kinohit;kinofamily;kinolove;kinoman;matchtvhd;boxtv;m1global;matchfighter;matchoursport;matchgamehd;matchgame;matcharenahd;matcharena;matchpremier;matchfootball1;matchfootball2;matchfootball3;khlhd;kinomix;nashenovoekino;rodnoekino;kinokomediya;indiankino;kinoseriya;kinouzas;matchpremierhd;matchfootball1hd;matchfootball2hd;matchfootball3hd'
+		local dvr
+		rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly93d3cudHZwbHVzb25saW5lLnJ1L3ZlcnNpb250di50eHQ')})
+		m_simpleTV.Http.Close(session)
+			if rc == 200 then
+				dvr = answer:match('dvr,([^%c%s]+)')
+			end
+		dvr = dvr or 'moscow24;kinopremier;kinohit;kinofamily;kinolove;kinoman;matchtvhd;boxtv;m1global;matchfighter;matchoursport;matchgamehd;matchgame;matcharenahd;matcharena;matchpremier;matchfootball1;matchfootball2;matchfootball3;khlhd;kinomix;nashenovoekino;rodnoekino;kinokomediya;indiankino;kinoseriya;kinouzas'
 		dvr = split(dvr, ';')
 			local function catchup(adr)
 				for i = 1, #dvr do
@@ -76,23 +82,17 @@ local filter = {
 				end
 			end
 			if #t == 0 then return end
-		local t0 = {}
 			for i = 1, #t do
-				if t[i].closed == 0 or (t[i].closed == 1 and t[i].RawM3UString) then
-					if t[i].closed == 1 and t[i].RawM3UString then
-						t[i].address = t[i].address .. '&plus=true'
-					end
-					if t[i].adr == 'matchpremierhd'
-						or t[i].adr == 'matchfootball1hd'
-						or t[i].adr == 'matchfootball2hd'
-						or t[i].adr == 'matchfootball3hd'
-					then
-						t[i].RawM3UString = nil
-					end
-					t0[#t0 + 1] = t[i]
+				if (t[i].closed == 1 and t[i].RawM3UString)
+					or t[i].adr == 'matchpremierhd'
+					or t[i].adr == 'matchfootball1hd'
+					or t[i].adr == 'matchfootball2hd'
+					or t[i].adr == 'matchfootball3hd'
+				then
+					t[i].address = t[i].address .. '&plus=true'
 				end
 			end
-	 return t0
+	 return t
 	end
 	function GetList(UpdateID, m3u_file)
 			if not UpdateID then return end
