@@ -1,68 +1,56 @@
--- видеоскрипт для сайта http://europaplustv.com (31/12/19)
+-- видеоскрипт для сайта http://europaplustv.com (21/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает ссылку ##
--- http://europaplustv.com/online
+-- https://europaplustv.com/online
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
-		if not m_simpleTV.Control.CurrentAddress:match('https?://[w%.]*europaplustv%.com/online') then return end
+		if not m_simpleTV.Control.CurrentAddress:match('https?://europaplustv%.com/online') then return end
 	local inAdr = m_simpleTV.Control.CurrentAddress
-	m_simpleTV.Control.ChangeAddress = 'Yes'
-	m_simpleTV.Control.CurrentAddress = 'error'
 	if m_simpleTV.Control.MainMode == 0 then
 		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = '', UseLogo = 0, Once = 1})
 	end
+	m_simpleTV.Control.ChangeAddress = 'Yes'
+	m_simpleTV.Control.CurrentAddress = 'error'
 	local function showError(str)
-		m_simpleTV.OSD.ShowMessageT({text = 'europaplustv ошибка: ' .. str, showTime = 8000, color = 0xffff1000, id = 'channelName'})
+		m_simpleTV.OSD.ShowMessageT({text = 'europaplustv ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'channelName'})
 	end
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36')
-		if not session then
-			showError('1')
-		 return
-		end
-	m_simpleTV.Http.SetTimeout(session, 8000)
-	local u = {url = 'http://europaplustv.com/embed/video?online=1', headers = 'Referer: ' .. inAdr}
-	local rc, answer = m_simpleTV.Http.Request(session, u)
-	if rc ~= 200 then
-		rc, answer = m_simpleTV.Http.Request(session, {url = u})
-	end
+	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
+		if not session then return end
+	m_simpleTV.Http.SetTimeout(session, 20000)
+	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 		if rc ~= 200 then
 			m_simpleTV.Http.Close(session)
-			showError('2')
+			showError('1')
 		 return
 		end
 	local retAdr = answer:match('[^\'"<>]+%.m3u8[^<>\'"]*')
 		if not retAdr then
-			showError('3')
+			showError('2')
 		 return
 		end
-	retAdr = retAdr:gsub('^//', 'http://')
+	retAdr = retAdr:gsub('^//', 'https://')
 	rc, answer = m_simpleTV.Http.Request(session, {url = retAdr})
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then
-			showError('4')
+			showError('3')
 		 return
 		end
 	local base = retAdr:match('.+/')
-	local t, i = {}, 1
-	local name, adr
-		for w in answer:gmatch('EXT%-X%-STREAM%-INF(.-%.m3u8.-)\n') do
-			adr = w:match('\n(.+)')
-			name = w:match('RESOLUTION=%d+x(%d+)')
-				if not adr or not name then break end
-			if not adr:match('^http') then
-				adr = adr:gsub('^%.%./', ''):gsub('^/', '')
-				adr = base .. adr
+	local t = {}
+		for w in answer:gmatch('EXT%-X%-STREAM%-INF.-\n.-\n') do
+			local adr = w:match('\n(.-)\n')
+			local name = w:match('RESOLUTION=%d+x(%d+)')
+			if adr and name then
+				if not adr:match('^http') then
+					adr = base .. adr:gsub('^[./]+', '')
+				end
+				t[#t + 1] = {}
+				t[#t].Id = tonumber(name)
+				t[#t].Name = name .. 'p'
+				t[#t].Address = adr
 			end
-			t[i] = {}
-			t[i].Id = tonumber(name)
-			t[i].Name = name .. 'p'
-			t[i].Address = adr
-			i = i + 1
 		end
-		if i == 1 then
-			m_simpleTV.Control.CurrentAddress = retAdr
-		 return
-		end
+		if #t == 0 then return end
 	table.sort(t, function(a, b) return a.Id < b.Id end)
 	local lastQuality = tonumber(m_simpleTV.Config.GetValue('europaplustv_qlty') or 5000)
 	local index = #t
