@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "TV+ HD" http://www.tvplusonline.ru (20/3/21)
+-- скрапер TVS для загрузки плейлиста "TV+ HD" http://www.tvplusonline.ru (21/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: tv+hd.lua
@@ -52,14 +52,13 @@ local filter = {
 		require 'json'
 		local tab = json.decode(answer)
 			if not tab then return end
-		local dvr
+		local dvr = {}
 		rc, answer = m_simpleTV.Http.Request(session, {url = decode64('aHR0cHM6Ly93d3cudHZwbHVzb25saW5lLnJ1L3ZlcnNpb250di50eHQ')})
 		m_simpleTV.Http.Close(session)
 			if rc == 200 then
-				dvr = answer:match('dvr,([^%c%s]+)')
+				dvr = answer:match('dvr,([^%c%s]+)') or ''
+				dvr = split(dvr, ';')
 			end
-		dvr = dvr or 'moscow24;kinopremier;kinohit;kinofamily;kinolove;kinoman;matchtvhd;boxtv;m1global;matchfighter;matchoursport;matchgamehd;matchgame;matcharenahd;matcharena;matchpremier;matchfootball1;matchfootball2;matchfootball3;khlhd;kinomix;nashenovoekino;rodnoekino;kinokomediya;indiankino;kinoseriya;kinouzas'
-		dvr = split(dvr, ';')
 			local function catchup(adr)
 				for i = 1, #dvr do
 					if adr == dvr[i] then
@@ -75,23 +74,54 @@ local filter = {
 				if title and adr then
 					t[#t +1] = {}
 					t[#t].name = unescape1(title)
-					t[#t].adr = adr
-					t[#t].address = string.format('https://tv+hd.%s', adr)
 					t[#t].RawM3UString = catchup(adr)
-					t[#t].closed = tab[i].closed
+					if tab[i].closed == 1 then
+						adr = string.format('%s&plus=true', adr)
+					end
+					t[#t].address = string.format('https://tv+hd.%s', adr)
 				end
 			end
 			if #t == 0 then return end
-			for i = 1, #t do
-				if (t[i].closed == 1 and t[i].RawM3UString)
-					or t[i].adr == 'matchpremierhd'
-					or t[i].adr == 'matchfootball1hd'
-					or t[i].adr == 'matchfootball2hd'
-					or t[i].adr == 'matchfootball3hd'
-				then
-					t[i].address = t[i].address .. '&plus=true'
-				end
-			end
+		local plus = {
+				{'ntvp2', 'НТВ (+2)'},
+				{'ntvp4', 'НТВ (+4)'},
+				{'ntvp6', 'НТВ (+6)'},
+				{'perviyp2', 'Первый (+2)'},
+				{'perviyp4', 'Первый (+4)'},
+				{'perviyp6', 'Первый (+6)'},
+				{'renp2', 'РЕН ТВ (+2)'},
+				{'renp4', 'РЕН ТВ (+4)'},
+				{'renp6', 'РЕН ТВ (+6)'},
+				{'russiap2', 'Россия 1 (+2)'},
+				{'russiap4', 'Россия 1 (+4)'},
+				{'russiap6', 'Россия 1 (+6)'},
+				{'stsp2', 'СТС (+2)'},
+				{'stsp4', 'СТС (+4)'},
+				{'stsp6', 'СТС (+6)'},
+				{'tntp2', 'ТНТ (+2)'},
+				{'tntp4', 'ТНТ (+4)'},
+				{'tntp6', 'ТНТ (+6)'},
+				{'tv3p2', 'ТВ-3 (+2)'},
+				{'tv3p4', 'ТВ-3 (+4)'},
+				{'tv3p6', 'ТВ-3 (+6)'},
+				{'karuselp2', 'Карусель (+2)'},
+				{'karuselp4', 'Карусель (+4)'},
+				{'karuselp6', 'Карусель (+6)'},
+				{'centrtv', 'Центральное телевидение'},
+				{'fridayp2', 'Пятница! (+2)'},
+				{'fridayp4', 'Пятница! (+4)'},
+				{'fridayp6', 'Пятница! (+6)'},
+				{'stshd', 'СТС HD'},
+				{'renhd', 'РЕН ТВ HD'},
+				{'russia', 'Россия 1'},
+				{'tv3hd', 'ТВ-3 HD'},
+				{'bridgetvhd', 'Bridge TV Deluxe'},
+				{'perviy', 'Первый'},
+				{'fridayhd', 'Пятница! HD'},
+			}
+			-- for i = 1, #plus do
+				-- table.insert(t, {name = plus[i][2], address = string.format('https://tv+hd.%s&plus=true', plus[i][1])})
+			-- end
 	 return t
 	end
 	function GetList(UpdateID, m3u_file)
