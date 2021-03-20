@@ -52,7 +52,7 @@ local filter = {
 		require 'json'
 		local tab = json.decode(answer)
 			if not tab then return end
-		local dvr = 'moscow24;kinopremier;kinohit;kinofamily;kinolove;kinoman;matchtvhd;boxtv;m1global;matchfighter;matchoursport;matchgamehd;matchgame;matcharenahd;matcharena;matchpremier;matchfootball1;matchfootball2;matchfootball3;khlhd;kinomix;nashenovoekino;rodnoekino;kinokomediya;indiankino;kinoseriya;kinouzas;matchpremierhd;bridgetvhd;matchfootball1hd;matchfootball2hd;matchfootball3hd'
+		local dvr = 'moscow24;kinopremier;kinohit;kinofamily;kinolove;kinoman;matchtvhd;boxtv;m1global;matchfighter;matchoursport;matchgamehd;matchgame;matcharenahd;matcharena;matchpremier;matchfootball1;matchfootball2;matchfootball3;khlhd;kinomix;nashenovoekino;rodnoekino;kinokomediya;indiankino;kinoseriya;kinouzas;matchpremierhd;matchfootball1hd;matchfootball2hd;matchfootball3hd'
 		dvr = split(dvr, ';')
 			local function catchup(adr)
 				for i = 1, #dvr do
@@ -83,7 +83,6 @@ local filter = {
 						t[i].address = t[i].address .. '&plus=true'
 					end
 					if t[i].adr == 'matchpremierhd'
-						or t[i].adr == 'bridgetvhd'
 						or t[i].adr == 'matchfootball1hd'
 						or t[i].adr == 'matchfootball2hd'
 						or t[i].adr == 'matchfootball3hd'
