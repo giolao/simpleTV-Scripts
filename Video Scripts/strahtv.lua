@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Страх ТВ" https://strah.video (21/3/21)
+-- видеоскрипт для плейлиста "Страх ТВ" https://strah.video (22/3/21)
 -- Copyright © 2017-2021 Nexter | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: strah_pls.lua
@@ -18,12 +18,12 @@
 	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0'
 	local session = m_simpleTV.Http.New(userAgent)
 		if not session then return end
-	m_simpleTV.Http.SetTimeout(session, 14000)
+	m_simpleTV.Http.SetTimeout(session, 12000)
 	local function showErr(str)
 		m_simpleTV.OSD.ShowMessageT({text = 'strah ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'channelName'})
 	end
 	local id = inAdr:match('%d+')
-	local host = inAdr:match('^https?://[^/]+/')
+	local host = inAdr:match('^https?://[^/]+')
 	local url = decode64('aHR0cHM6Ly9zdHJhaC52aWRlby9zdHJlYW0/YXNwZWN0PSZ3aWR0aD0maGVpZ2h0PSZpZj0') .. id
 	local headers = 'Referer: ' .. inAdr
 	local rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = headers})
@@ -39,7 +39,7 @@
 			showErr('2')
 		 return
 		end
-	local playerjs_url = answer:match('src="/([^":]+)')
+	local playerjs_url = answer:match('src="(/[^"]+)')
 		if not playerjs_url then
 			showErr('3')
 		 return
