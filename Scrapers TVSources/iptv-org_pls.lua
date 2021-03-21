@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (20/3/21)
+-- скрапер TVS для загрузки плейлиста "Iptv-org" https://github.com/iptv-org/iptv (21/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## Переименовать каналы ##
 local filter = {
@@ -72,7 +72,7 @@ local filter = {
 						local group_logo = w:match('fallback%-src="([^"<]+)')
 						local group = w:match('</g%-emoji>([^<]+)') or 'Undefined'
 						group = group:gsub('amp;', '')
-						group = group:upper()
+						group = string.upper(group)
 						answer = string.gsub(answer, '(".-")', function(c) return c:gsub(',', '%%2C') end)
 						answer = answer:gsub('\n#EXTVLC', '$')
 						t = getTbl(t, group, answer, group_logo)
