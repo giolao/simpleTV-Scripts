@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "Countries" https://github.com/Free-IPTV/Countries (20/3/21)
+-- скрапер TVS для загрузки плейлиста "Countries" https://github.com/Free-IPTV/Countries (21/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## Переименовать каналы ##
 local filter = {
@@ -27,6 +27,7 @@ local filter = {
 	end
 	local function flags(str)
 		local t = {
+		{'caribbean netherlands', 'https://github.githubassets.com/images/icons/emoji/unicode/1f1e7-1f1f6.png?v8'},
 		{'afghanistan', 'https://github.githubassets.com/images/icons/emoji/unicode/1f1e6-1f1eb.png'},
 		{'albania', 'https://github.githubassets.com/images/icons/emoji/unicode/1f1e6-1f1f1.png'},
 		{'algeria', 'https://github.githubassets.com/images/icons/emoji/unicode/1f1e9-1f1ff.png'},
@@ -263,7 +264,7 @@ local filter = {
 		{'åland islands', 'https://github.githubassets.com/images/icons/emoji/unicode/1f1e6-1f1fd.png'},
 		}
 			for i = 1, #t do
-				if t[i][1] == str then
+				if t[i][1] == string.lower(str) then
 					return t[i][2]
 				end
 			end
