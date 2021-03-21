@@ -18,13 +18,13 @@
 	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0'
 	local session = m_simpleTV.Http.New(userAgent)
 		if not session then return end
-	m_simpleTV.Http.SetTimeout(session, 12000)
+	m_simpleTV.Http.SetTimeout(session, 14000)
 	local function showErr(str)
 		m_simpleTV.OSD.ShowMessageT({text = 'strah ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'channelName'})
 	end
 	local id = inAdr:match('%d+')
-	local host = inAdr:match('^https?://[^/]+')
-	local url = 'https://strah.video/stream?if=' .. id
+	local host = inAdr:match('^https?://[^/]+/')
+	local url = decode64('aHR0cHM6Ly9zdHJhaC52aWRlby9zdHJlYW0/YXNwZWN0PSZ3aWR0aD0maGVpZ2h0PSZpZj0') .. id
 	local headers = 'Referer: ' .. inAdr
 	local rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = headers})
 		if rc ~= 200 then
@@ -33,13 +33,13 @@
 		 return
 		end
 	answer = answer:gsub('%s+', '')
-	answer = answer:gsub('<!%-%-.-%-%->', ''):gsub('/%*.-%*/', '')
+	answer = answer:gsub('<!%-.-%->', ''):gsub('/%*.-%*/', '')
 	local retAdr = answer:match('[\'"]:[\'"](#[^\'"]+)')
 		if not retAdr then
 			showErr('2')
 		 return
 		end
-	local playerjs_url = answer:match('"text/javascript"src="(/[^"]+)')
+	local playerjs_url = answer:match('src="/([^":]+)')
 		if not playerjs_url then
 			showErr('3')
 		 return
@@ -58,11 +58,11 @@
 			showErr('5')
 		 return
 		end
-	local v1 = answer:match('StrahVideoStreamHttp%s*=%s*"([^"]+)') or ''
-	local v2 = answer:match('StrahVideoStreamPort%s*=%s*"([^"]+)') or ''
-	local v3 = answer:match('StrahVideoStreamLive%s*=%s*"([^"]+)') or ''
-	local v4 = answer:match('StrahVideoStreamPlaylist%s*=%s*"([^"]+)') or ''
-	local v5 = answer:match('StrahVideoStreamOther%s*=%s*"([^"]+)') or ''
+	local v1 = answer:match('StreamHttp%s*=%s*"([^"]+)') or ''
+	local v2 = answer:match('StreamPort%s*=%s*"([^"]+)') or ''
+	local v3 = answer:match('StreamLive%s*=%s*"([^"]+)') or ''
+	local v4 = answer:match('StreamPlaylist%s*=%s*"([^"]+)') or ''
+	local v5 = answer:match('StreamOther%s*=%s*"([^"]+)') or ''
 	retAdr = retAdr:gsub('{v1}', v1):gsub('{v2}', v2):gsub('{v3}', v3):gsub('{v4}', v4):gsub('{v5}', v5)
 	retAdr = retAdr:gsub('%[%d+%]', ''):gsub('amp;', '')
 	retAdr = retAdr .. '$OPT:http-referrer=' .. inAdr .. '$OPT:http-user-agent=' .. userAgent
