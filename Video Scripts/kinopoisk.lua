@@ -27,13 +27,13 @@ local tname = {
 -- отключить: поставить в начале строки --
 	'КиноПоиск онлайн',
 	'ivi',
-	'CDN Movies',
 	'Videocdn',
 	'Kodik',
 	'Videoframe',
 	'Filmix',
 	'Collaps',
 	'Hdvb',
+	'CDN Movies',
 	'Seasonvar',
 	'ZonaMobi',
 	}
