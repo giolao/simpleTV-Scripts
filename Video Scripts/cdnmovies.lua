@@ -79,6 +79,9 @@
 				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
 			 return
 			end
+		if inAdr:match('^$cdnmovies') then
+			retAdr = retAdr .. '$OPT:POSITIONTOCONTINUE=0'
+		end
 		m_simpleTV.Control.CurrentAddress = retAdr
 -- debug_in_file(retAdr .. '\n')
 	end
