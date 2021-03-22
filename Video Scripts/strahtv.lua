@@ -1,7 +1,7 @@
 -- видеоскрипт для плейлиста "Страх ТВ" https://strah.video (22/3/21)
 -- Copyright © 2017-2021 Nexter | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
--- скрапер TVS: strah_pls.lua
+-- скрапер TVS: strahtv_pls.lua
 -- модуль: /core/playerjs.lua
 -- ## открывает подобные ссылки ##
 -- https://strah.video/id/1
