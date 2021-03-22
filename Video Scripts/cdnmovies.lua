@@ -27,6 +27,10 @@
 	if not m_simpleTV.User.cdnmovies then
 		m_simpleTV.User.cdnmovies = {}
 	end
+	local function showMsg(str, color)
+		local t = {text = 'CDN Movies ошибка: ' .. str, showTime = 1000 * 8, color = color, id = 'channelName'}
+		m_simpleTV.OSD.ShowMessageT(t)
+	end
 	local function cdnmoviesIndex(t)
 		local lastQuality = tonumber(m_simpleTV.Config.GetValue('cdnmovies_qlty') or 5000)
 		local index = #t
@@ -109,7 +113,10 @@
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 	m_simpleTV.Http.Close(session)
-		if rc ~= 200 then return end
+		if rc ~= 200 then
+			showMsg('это видео удалено', ARGB(255, 255, 102, 0))
+		 return
+		end
 	local title = m_simpleTV.Control.CurrentTitle_UTF8
 	answer = answer:match('file:\'([^\']+)')
 		if not answer then return end
