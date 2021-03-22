@@ -61,6 +61,10 @@
 		m_simpleTV.User.cdnmovies.Index = index
 	 return t[index].Address
 	end
+	local function trim(str)
+		str = string.match(str,'^%s*(.-)%s*$')
+	 return str
+	end
 	function Qlty_cdnmovies()
 		local t = m_simpleTV.User.cdnmovies.Tab
 			if not t then return end
@@ -73,7 +77,7 @@
 			m_simpleTV.Config.SetValue('cdnmovies_qlty', t[id].qlty)
 		end
 	end
-	local function play(Adr)
+	local function play(Adr, title)
 		local retAdr = cdnmoviesAdr(Adr)
 			if not retAdr then
 				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
@@ -84,10 +88,20 @@
 		end
 		m_simpleTV.Control.CurrentAddress = retAdr
 -- debug_in_file(retAdr .. '\n')
+		m_simpleTV.Control.SetTitle(title)
+		m_simpleTV.Control.CurrentTitle_UTF8 = title
+		m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
 	end
 		if inAdr:match('^$cdnmovies') then
-			m_simpleTV.Control.CurrentTitle_UTF8 = m_simpleTV.User.cdnmovies.title
-			play(inAdr)
+			local title = ''
+			local t = m_simpleTV.Control.GetCurrentChannelInfo()
+			if t
+				and t.MultiHeader
+				and t.MultiName
+			then
+				title = t.MultiHeader .. ': ' .. t.MultiName
+			end
+			play(inAdr, title)
 		 return
 		end
 	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
@@ -96,7 +110,6 @@
 	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then return end
-	m_simpleTV.User.cdnmovies.title = nil
 	local title = m_simpleTV.Control.CurrentTitle_UTF8
 	answer = answer:match('file:\'([^\']+)')
 		if not answer then return end
@@ -122,11 +135,12 @@
 	end
 	if answer:match('folder') then
 		local season
+		local seasonName = ''
 		t, i = {}, 1
 			while tab[tr].folder[i] do
 				t[i] = {}
 				t[i].Id = i
-				t[i].Name = tab[tr].folder[i].title
+				t[i].Name = trim(tab[tr].folder[i].title)
 				t[i].Address = i
 				i = i + 1
 			end
@@ -135,8 +149,10 @@
 			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон - ' .. title, 0, t, 8000, 1 + 2)
 			id = id or 1
 		 	season = t[id].Address
+			seasonName = ' (' .. t[id].Name .. ')'
 		else
 			season = t[1].Address
+			seasonName = ' (' .. t[1].Name .. ')'
 		end
 		t, i = {}, 1
 			while tab[tr].folder[season].folder[i] do
@@ -153,9 +169,9 @@
 		if #t == 1 then
 			pl = 32
 		end
-		m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 8000, pl + 64)
+		m_simpleTV.OSD.ShowSelect_UTF8(title .. seasonName, 0, t, 8000, pl + 64)
 		inAdr = t[1].Address
-		m_simpleTV.User.cdnmovies.title = title
+		title = title .. seasonName .. ': ' .. t[1].Name
 	else
 		inAdr = tab[tr].file
 		local t1 = {}
@@ -167,4 +183,4 @@
 		t1.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
 		m_simpleTV.OSD.ShowSelect_UTF8('CDN Movies', 0, t1, 8000, 64 + 32 + 128)
 	end
-	play(inAdr)
+	play(inAdr, title)
