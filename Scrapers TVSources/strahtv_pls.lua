@@ -1,7 +1,7 @@
 -- скрапер TVS для загрузки плейлиста "Страх ТВ" https://strah.video (15/2/21)
 -- Copyright © 2017-2021 Nexter | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
--- видеоскрипт: strah.lua
+-- видеоскрипт: strahtv.lua
 -- ## Переименовать каналы ##
 local filter = {
 	{'Zee-TV', 'Zee TV'},
