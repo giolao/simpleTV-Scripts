@@ -93,7 +93,7 @@
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then return end
 	local title = m_simpleTV.Control.CurrentTitle_UTF8
-	local answer = answer:match('file:\'([^\']+)')
+	answer = answer:match('file:\'([^\']+)')
 		if not answer then return end
 	answer = answer:gsub('%[%]', '""')
 	local tab = json.decode(answer)
@@ -109,7 +109,7 @@
 		end
 		if #t == 0 then return end
 	if #t > 1 then
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод - ' .. title, 0, t, 5000, 1)
+		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод - ' .. title, 0, t, 8000, 1)
 		id = id or 1
 		tr = t[id].Address
 	else
@@ -127,7 +127,7 @@
 			end
 			if #t == 0 then return end
 		if #t > 1 then
-			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон - ' .. title, 0, t, 5000, 1)
+			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон - ' .. title, 0, t, 8000, 1)
 			id = id or 1
 		 	season = t[id].Address
 		else
@@ -145,7 +145,7 @@
 		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
 		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
 		if #t > 1 then
-			local _, id = m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 5000)
+			local _, id = m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 8000)
 			id = id or 1
 		 	inAdr = t[id].Address
 		else
@@ -160,6 +160,6 @@
 		t1[1].Address = inAdr
 		t1.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
 		t1.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
-		m_simpleTV.OSD.ShowSelect_UTF8('CDN Movies', 0, t1, 5000, 64 + 32 + 128)
+		m_simpleTV.OSD.ShowSelect_UTF8('CDN Movies', 0, t1, 8000, 64 + 32 + 128)
 	end
 	play(inAdr)
