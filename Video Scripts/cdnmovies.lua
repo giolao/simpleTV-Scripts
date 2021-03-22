@@ -1,4 +1,4 @@
--- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (22/3/21)
+-- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (23/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://700filmov.ru/film/637
@@ -83,6 +83,7 @@
 -- debug_in_file(retAdr .. '\n')
 	end
 		if inAdr:match('^$cdnmovies') then
+			m_simpleTV.Control.CurrentTitle_UTF8 = m_simpleTV.User.cdnmovies.title
 			play(inAdr)
 		 return
 		end
@@ -92,6 +93,7 @@
 	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then return end
+	m_simpleTV.User.cdnmovies.title = nil
 	local title = m_simpleTV.Control.CurrentTitle_UTF8
 	answer = answer:match('file:\'([^\']+)')
 		if not answer then return end
@@ -109,7 +111,7 @@
 		end
 		if #t == 0 then return end
 	if #t > 1 then
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод - ' .. title, 0, t, 8000, 1)
+		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод - ' .. title, 0, t, 8000, 1 + 2)
 		id = id or 1
 		tr = t[id].Address
 	else
@@ -127,7 +129,7 @@
 			end
 			if #t == 0 then return end
 		if #t > 1 then
-			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон - ' .. title, 0, t, 8000, 1)
+			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон - ' .. title, 0, t, 8000, 1 + 2)
 			id = id or 1
 		 	season = t[id].Address
 		else
@@ -144,13 +146,13 @@
 			if #t == 0 then return end
 		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
 		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
-		if #t > 1 then
-			local _, id = m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 8000)
-			id = id or 1
-		 	inAdr = t[id].Address
-		else
-			inAdr = t[1].Address
+		local pl = 0
+		if #t == 1 then
+			pl = 32
 		end
+		m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 8000, pl + 64)
+		inAdr = t[1].Address
+		m_simpleTV.User.cdnmovies.title = title
 	else
 		inAdr = tab[tr].file
 		local t1 = {}
