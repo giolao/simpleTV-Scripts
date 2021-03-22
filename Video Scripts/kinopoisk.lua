@@ -1,4 +1,4 @@
--- видеоскрипт для сайта http://www.kinopoisk.ru (22/3/21)
+-- видеоскрипт для сайта http://www.kinopoisk.ru (23/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видеоскрипт: yandex-vod.lua, kodik.lua, filmix.lua, videoframe.lua, seasonvar.lua
@@ -27,6 +27,7 @@ local tname = {
 -- отключить: поставить в начале строки --
 	'КиноПоиск онлайн',
 	'ivi',
+	'CDN Movies',
 	'Videocdn',
 	'Kodik',
 	'Videoframe',
@@ -34,7 +35,6 @@ local tname = {
 	'Collaps',
 	'Hdvb',
 	'Seasonvar',
-	'CDN Movies',
 	'ZonaMobi',
 	}
 -- ##
@@ -104,9 +104,17 @@ local tname = {
 				if rc ~= 200 then return end
 			return answer:match('"iframe_src":"([^"]+)')
 		elseif url:match('cdnmovies%.net') then
+			if zonaSerial then
+				url = url:gsub('/movies', '/serials') .. '&limit=1&search=' .. title
+			else
+				url = url .. '&kinopoisk_id=' .. kpid
+			end
 			rc, answer = m_simpleTV.Http.Request(session, {url = url})
 				if rc ~= 200 then return end
-			return answer:match('"iframe_src":"([^"]+)')
+				if answer:match('"kinopoisk_id":"' .. kpid) then
+				 return answer:match('"iframe_src":"([^"]+)')
+				end
+			return
 		elseif url:match('ivi%.ru') then
 			rc, answer = m_simpleTV.Http.Request(session, {url = url .. m_simpleTV.Common.toPercentEncoding(title) ..'&from=0&to=5&app_version=870&paid_type=AVOD'})
 				if rc ~= 200 or (rc == 200 and not answer:match('^{')) then return end
@@ -402,7 +410,7 @@ local tname = {
 			elseif tname[i] == 'Collaps' then
 				turl[i] = {adr = decode64('aHR0cHM6Ly9hcGkuc3luY2hyb25jb2RlLmNvbS9lbWJlZC9rcC8') .. kpid, tTitle = 'Большая база фильмов и сериалов', tLogo = logo_k}
 			elseif tname[i] == 'CDN Movies' then
-				turl[i] = {adr = decode64('aHR0cHM6Ly9jZG5tb3ZpZXMubmV0L2FwaS9tb3ZpZXM/dG9rZW49ZTJiY2MwOTVhMzA1NDc5MjNmYjIwODQ0YmRmNWZjNTQma2lub3BvaXNrX2lkPQ') .. kpid, tTitle = 'Большая база фильмов и сериалов', tLogo = logo_k}
+				turl[i] = {adr = decode64('aHR0cHM6Ly9jZG5tb3ZpZXMubmV0L2FwaS9tb3ZpZXM/dG9rZW49ZTJiY2MwOTVhMzA1NDc5MjNmYjIwODQ0YmRmNWZjNTQ'), tTitle = 'Большая база фильмов и сериалов', tLogo = logo_k}
 			elseif tname[i] == 'Hdvb' then
 				turl[i] = {adr = decode64('aHR0cHM6Ly92YjE3MTIwYXllc2hhamVua2lucy5wdy9hcGkvdmlkZW9zLmpzb24/dG9rZW49Yzk5NjZiOTQ3ZGEyZjNjMjliMzBjMGUwZGNjYTZjZjQmaWRfa3A9') .. kpid, tTitle = 'Большая база фильмов и сериалов', tLogo = logo_k}
 			end
