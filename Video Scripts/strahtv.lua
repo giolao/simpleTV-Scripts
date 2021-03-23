@@ -20,7 +20,7 @@
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 12000)
 	local function showErr(str)
-		m_simpleTV.OSD.ShowMessageT({text = 'strah ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'channelName'})
+		m_simpleTV.OSD.ShowMessageT({text = 'Страх ТВ ошибка: ' .. str, showTime = 1000 * 5, color = ARGB(255, 255, 102, 0), id = 'channelName'})
 	end
 	local id = inAdr:match('%d+')
 	local host = inAdr:match('^https?://[^/]+')
