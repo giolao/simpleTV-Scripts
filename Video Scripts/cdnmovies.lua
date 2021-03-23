@@ -69,18 +69,6 @@
 		str = string.match(str,'^%s*(.-)%s*$')
 	 return str
 	end
-	function Qlty_cdnmovies()
-		local t = m_simpleTV.User.cdnmovies.Tab
-			if not t then return end
-		m_simpleTV.Control.ExecuteAction(37)
-		local index = cdnmoviesIndex(t)
-		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
-		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('⚙ Качество', index - 1, t, 5000, 1 + 4)
-		if ret == 1 then
-			m_simpleTV.Control.SetNewAddress(t[id].Address, m_simpleTV.Control.GetPosition())
-			m_simpleTV.Config.SetValue('cdnmovies_qlty', t[id].qlty)
-		end
-	end
 	local function play(Adr, title)
 		local retAdr = cdnmoviesAdr(Adr)
 			if not retAdr then
@@ -95,6 +83,18 @@
 		m_simpleTV.Control.SetTitle(title)
 		m_simpleTV.Control.CurrentTitle_UTF8 = title
 		m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
+	end
+	function Qlty_cdnmovies()
+		local t = m_simpleTV.User.cdnmovies.Tab
+			if not t then return end
+		m_simpleTV.Control.ExecuteAction(37)
+		local index = cdnmoviesIndex(t)
+		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
+		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('⚙ Качество', index - 1, t, 5000, 1 + 4)
+		if ret == 1 then
+			m_simpleTV.Control.SetNewAddress(t[id].Address, m_simpleTV.Control.GetPosition())
+			m_simpleTV.Config.SetValue('cdnmovies_qlty', t[id].qlty)
+		end
 	end
 		if inAdr:match('^$cdnmovies') then
 			local title = ''
@@ -134,8 +134,8 @@
 		end
 		if #t == 0 then return end
 	if #t > 1 then
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод - ' .. title, 0, t, 8000, 1 + 2)
-		id = id or 1
+		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, #t - 1, t, 8000, 1 + 2 + 4 + 8)
+		id = id or #t
 		tr = t[id].Address
 	else
 		tr = t[1].Address
@@ -153,7 +153,7 @@
 			end
 			if #t == 0 then return end
 		if #t > 1 then
-			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон - ' .. title, 0, t, 8000, 1 + 2)
+			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, 0, t, 8000, 1 + 2)
 			id = id or 1
 		 	season = t[id].Address
 			seasonName = ' (' .. t[id].Name .. ')'
