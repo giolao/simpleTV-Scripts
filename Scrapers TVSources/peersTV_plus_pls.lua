@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "PeersTV+" http://peers.tv (7/3/21)
+-- скрапер TVS для загрузки плейлиста "PeersTV+" http://peers.tv (23/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: peersTV.lua
@@ -88,7 +88,7 @@ local filter = {
 		end
 			if not outm3u or outm3u == '' then return '' end
 		outm3u = outm3u:gsub('#EXTM3U.-\n', '#EXTM3U\n')
-		outm3u = outm3u:gsub('#EXTINF[^,]+,', '#EXTINF:-1 catchup="append" catchup-minutes="180" catchup-source="&offset=${offset}",')
+		outm3u = outm3u:gsub('#EXTINF[^,]+,', '#EXTINF:-1 catchup="append" catchup-minutes="360" catchup-source="&offset=${offset}",')
 		local t_pls = tvs_core.GetPlsAsTable(outm3u)
 			for _, v in pairs(t_pls) do
 				v.name = trim(v.name)
