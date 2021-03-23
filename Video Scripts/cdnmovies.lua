@@ -1,4 +1,4 @@
--- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (23/3/21)
+-- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (24/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://700filmov.ru/film/637
@@ -123,19 +123,32 @@
 	answer = answer:gsub('%[%]', '""')
 	local tab = json.decode(answer)
 		if not tab then return end
-	local tr
+	local tr, selected_dubl, selected_mnogoPro
 	local t, i = {}, 1
 		while tab[i] do
+			local title = tab[i].title
 			t[i] = {}
 			t[i].Id = i
-			t[i].Name = tab[i].title
+			t[i].Name = title
 			t[i].Address = i
+			if not selected_dubl
+				and title:match('дублир')
+			then
+				selected_dubl = #t
+			end
+			if not selected_mnogoPro
+				and title:match('много')
+				and title:match('фессион')
+			then
+				selected_mnogoPro = #t
+			end
 			i = i + 1
 		end
 		if #t == 0 then return end
+	local selected = selected_dubl or selected_mnogoPro or #t
 	if #t > 1 then
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, #t - 1, t, 8000, 1 + 2 + 4 + 8)
-		id = id or #t
+		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, selected - 1, t, 8000, 1 + 2 + 4 + 8)
+		id = id or selected
 		tr = t[id].Address
 	else
 		tr = t[1].Address
