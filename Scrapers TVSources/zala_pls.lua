@@ -1,6 +1,6 @@
 -- скрапер TVS для загрузки плейлиста "Zala" http://zala.by (23/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
--- только для беларуссии (тест)
+-- только для беларуссии
 -- ## переименовать каналы ##
 local filter = {
 	{'Муз ТВ', 'МУЗ-ТВ'},
@@ -66,6 +66,7 @@ local filter = {
 					and adr
 					and tab.channels_list[i].is_crypted == '0'
 				then
+					adr = adr:gsub('https://', 'http://')
 					t[#t + 1] = {}
 					t[#t].name = title
 					t[#t].address = adr
