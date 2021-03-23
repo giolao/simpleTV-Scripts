@@ -1,4 +1,4 @@
--- скрапер TVS для загрузки плейлиста "PeersTV" http://peers.tv (7/3/21)
+-- скрапер TVS для загрузки плейлиста "PeersTV" http://peers.tv (23/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- видоскрипт: peersTV.lua
@@ -98,7 +98,7 @@ local filter = {
 					t[i].name = name
 					id = w:match('%sid=(%d+)')
 					if w:match('timeshift=true') and id then
-						t[i].RawM3UString = 'catchup="append" catchup-minutes="180" catchup-source="&offset=${offset}"'
+						t[i].RawM3UString = 'catchup="append" catchup-minutes="360" catchup-source="&offset=${offset}"'
 						adr = adr .. '$id=' .. id
 					end
 					t[i].address = adr
