@@ -1,4 +1,4 @@
--- видеоскрипт для плейлиста "Страх ТВ" https://strah.video (22/3/21)
+-- видеоскрипт для плейлиста "Страх ТВ" https://strah.video (23/3/21)
 -- Copyright © 2017-2021 Nexter | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## необходим ##
 -- скрапер TVS: strahtv_pls.lua
@@ -36,7 +36,7 @@
 	answer = answer:gsub('<!%-.-%->', ''):gsub('/%*.-%*/', '')
 	local retAdr = answer:match('[\'"]:[\'"](#[^\'"]+)')
 		if not retAdr then
-			showErr('2')
+			showErr('2, писец пришёл ...')
 		 return
 		end
 	local playerjs_url = answer:match('src="(/[^"]+)')
