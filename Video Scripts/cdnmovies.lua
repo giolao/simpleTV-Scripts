@@ -27,8 +27,8 @@
 	if not m_simpleTV.User.cdnmovies then
 		m_simpleTV.User.cdnmovies = {}
 	end
-	local function showMsg(str, color)
-		local t = {text = 'CDN Movies ошибка: ' .. str, showTime = 1000 * 8, color = color, id = 'channelName'}
+	local function showMsg(str)
+		local t = {text = 'CDN Movies ошибка: ' .. str, showTime = 1000 * 8, color = ARGB(255, 255, 102, 0), id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	local function cdnmoviesIndex(t)
@@ -69,8 +69,12 @@
 		str = string.match(str,'^%s*(.-)%s*$')
 	 return str
 	end
-	local function play(Adr, title)
-		local retAdr = cdnmoviesAdr(Adr)
+	local function play(adr, title)
+			if not adr then
+				showMsg('no adr')
+			 return
+			end
+		local retAdr = cdnmoviesAdr(adr)
 			if not retAdr then
 				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
 			 return
@@ -83,6 +87,94 @@
 		m_simpleTV.Control.SetTitle(title)
 		m_simpleTV.Control.CurrentTitle_UTF8 = title
 		m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
+	end
+	local function transl(tab, title)
+		local tr, selected_dubl, selected_mnogoPro
+		local t, i = {}, 1
+			while tab[i] do
+				local name = tab[i].title
+				t[i] = {}
+				t[i].Id = i
+				t[i].Name = name
+				t[i].Address = i
+				if not selected_dubl
+					and name:match('дублир')
+				then
+					selected_dubl = #t
+				end
+				if not selected_mnogoPro
+					and name:match('много')
+					and name:match('фессион')
+				then
+					selected_mnogoPro = #t
+				end
+				i = i + 1
+			end
+			if #t == 0 then return end
+		local selected = selected_dubl or selected_mnogoPro or #t
+		local id
+		if #t > 1 then
+			local _, d = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, selected - 1, t, 8000, 1 + 2 + 4 + 8)
+			id = d
+		end
+		id = id or selected
+	 return t[id].Address
+	end
+	local function seasons(tab, tr, title)
+		local season
+		local seasonName = ''
+		local t, i = {}, 1
+			while tab[tr].folder[i] do
+				t[i] = {}
+				t[i].Id = i
+				t[i].Name = trim(tab[tr].folder[i].title)
+				t[i].Address = i
+				i = i + 1
+			end
+			if #t == 0 then return end
+		local id
+		if #t > 1 then
+			local _, d = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, 0, t, 8000, 1 + 2)
+			id = d
+		end
+		id = id or 1
+	 return t[id].Address, ' (' .. t[id].Name .. ')'
+	end
+	local function episodes(tab, tr, title, season, seasonName)
+		local t, i = {}, 1
+			while tab[tr].folder[season].folder[i] do
+				t[i] = {}
+				t[i].Id = i
+				t[i].Name = tab[tr].folder[season].folder[i].title
+				t[i].Address = '$cdnmovies' .. tab[tr].folder[season].folder[i].file
+				i = i + 1
+			end
+			if #t == 0 then return end
+		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
+		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
+		local pl = 0
+		if #t == 1 then
+			pl = 32
+		end
+		m_simpleTV.OSD.ShowSelect_UTF8(title .. seasonName, 0, t, 8000, pl + 64)
+	 return t[1].Address, title .. seasonName .. ': ' .. t[1].Name
+	end
+	local function movie(tab, tr, title)
+		local adr = tab[tr].file
+		local t = {}
+		t[1] = {}
+		t[1].Id = 1
+		t[1].Name = title
+		t[1].Address = inAdr
+		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
+		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
+		m_simpleTV.OSD.ShowSelect_UTF8('CDN Movies', 0, t, 8000, 64 + 32 + 128)
+	 return adr, title
+	end
+	local function serials(tab, tr, title)
+		local season, seasonName = seasons(tab, tr, title)
+			if not season then return end
+	 return episodes(tab, tr, title, season, seasonName)
 	end
 	function Qlty_cdnmovies()
 		local t = m_simpleTV.User.cdnmovies.Tab
@@ -114,93 +206,28 @@
 	local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then
-			showMsg('это видео удалено', ARGB(255, 255, 102, 0))
+			showMsg('это видео удалено')
 		 return
 		end
 	local title = m_simpleTV.Control.CurrentTitle_UTF8
 	answer = answer:match('file:\'([^\']+)')
-		if not answer then return end
+		if not answer then
+			showMsg('no files in answer')
+		 return
+		end
 	answer = answer:gsub('%[%]', '""')
 	local tab = json.decode(answer)
-		if not tab then return end
-	local tr, selected_dubl, selected_mnogoPro
-	local t, i = {}, 1
-		while tab[i] do
-			local title = tab[i].title
-			t[i] = {}
-			t[i].Id = i
-			t[i].Name = title
-			t[i].Address = i
-			if not selected_dubl
-				and title:match('дублир')
-			then
-				selected_dubl = #t
-			end
-			if not selected_mnogoPro
-				and title:match('много')
-				and title:match('фессион')
-			then
-				selected_mnogoPro = #t
-			end
-			i = i + 1
+		if not tab then
+			showMsg('no tab')
+		 return
 		end
-		if #t == 0 then return end
-	local selected = selected_dubl or selected_mnogoPro or #t
-	if #t > 1 then
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, selected - 1, t, 8000, 1 + 2 + 4 + 8)
-		id = id or selected
-		tr = t[id].Address
-	else
-		tr = t[1].Address
-	end
+	local tr = transl(tab, title)
+		if not tr then
+			showMsg('no transl')
+		 return
+		end
 	if answer:match('folder') then
-		local season
-		local seasonName = ''
-		t, i = {}, 1
-			while tab[tr].folder[i] do
-				t[i] = {}
-				t[i].Id = i
-				t[i].Name = trim(tab[tr].folder[i].title)
-				t[i].Address = i
-				i = i + 1
-			end
-			if #t == 0 then return end
-		if #t > 1 then
-			local _, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, 0, t, 8000, 1 + 2)
-			id = id or 1
-		 	season = t[id].Address
-			seasonName = ' (' .. t[id].Name .. ')'
-		else
-			season = t[1].Address
-			seasonName = ' (' .. t[1].Name .. ')'
-		end
-		t, i = {}, 1
-			while tab[tr].folder[season].folder[i] do
-				t[i] = {}
-				t[i].Id = i
-				t[i].Name = tab[tr].folder[season].folder[i].title
-				t[i].Address = '$cdnmovies' .. tab[tr].folder[season].folder[i].file
-				i = i + 1
-			end
-			if #t == 0 then return end
-		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
-		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
-		local pl = 0
-		if #t == 1 then
-			pl = 32
-		end
-		m_simpleTV.OSD.ShowSelect_UTF8(title .. seasonName, 0, t, 8000, pl + 64)
-		inAdr = t[1].Address
-		title = title .. seasonName .. ': ' .. t[1].Name
+		play(serials(tab, tr, title))
 	else
-		inAdr = tab[tr].file
-		local t1 = {}
-		t1[1] = {}
-		t1[1].Id = 1
-		t1[1].Name = title
-		t1[1].Address = inAdr
-		t1.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'Qlty_cdnmovies()'}
-		t1.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
-		m_simpleTV.OSD.ShowSelect_UTF8('CDN Movies', 0, t1, 8000, 64 + 32 + 128)
+		play(movie(tab, tr, title))
 	end
-	play(inAdr, title)
