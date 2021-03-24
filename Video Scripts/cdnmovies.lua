@@ -1,8 +1,8 @@
--- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (24/3/21)
+-- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (25/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://700filmov.ru/film/637
--- https://700filmov.ru/serial/5
+-- http://700filmov.ru/serial/109
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://700filmov%.ru/')
@@ -85,27 +85,31 @@
 	end
 	local function transl(tab, title)
 		local tr, selected_dubl, selected_mnogoPro
-		local t, i = {}, 1
-			while tab[i] do
-				local name = tab[i].title
-				t[i] = {}
+		local hash, t = {}, {}
+			for i = 1, #tab do
+				local title = trim(tab[i].title)
+				if not hash[title] then
+					t[#t + 1] = tab[i]
+					hash[title] = true
+				end
+			end
+			for i = 1, #t do
 				t[i].Id = i
-				t[i].Name = name
 				t[i].Address = i
+				local name = t[i].title
+				t[i].Name = name
 				if not selected_dubl
 					and name:match('дублир')
 				then
-					selected_dubl = #t
+					selected_dubl = i
 				end
 				if not selected_mnogoPro
 					and name:match('много')
 					and name:match('фессион')
 				then
-					selected_mnogoPro = #t
+					selected_mnogoPro = i
 				end
-				i = i + 1
 			end
-			if #t == 0 then return end
 		local selected = selected_dubl or selected_mnogoPro or #t
 		local id
 		if #t > 1 then
