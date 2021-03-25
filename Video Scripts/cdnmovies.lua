@@ -85,31 +85,27 @@
 	end
 	local function transl(tab, title)
 		local tr, selected_dubl, selected_mnogoPro
-		local hash, t = {}, {}
-			for i = 1, #tab do
-				local title = trim(tab[i].title)
-				if not hash[title] then
-					t[#t + 1] = tab[i]
-					hash[title] = true
-				end
-			end
-			for i = 1, #t do
+		local t, i = {}, 1
+			while tab[i] do
+				local name = tab[i].title
+				t[i] = {}
 				t[i].Id = i
-				t[i].Address = i
-				local name = t[i].title
 				t[i].Name = name
+				t[i].Address = i
 				if not selected_dubl
 					and name:match('дублир')
 				then
-					selected_dubl = i
+					selected_dubl = #t
 				end
 				if not selected_mnogoPro
 					and name:match('много')
 					and name:match('фессион')
 				then
-					selected_mnogoPro = i
+					selected_mnogoPro = #t
 				end
+				i = i + 1
 			end
+			if #t == 0 then return end
 		local selected = selected_dubl or selected_mnogoPro or #t
 		local id
 		if #t > 1 then
