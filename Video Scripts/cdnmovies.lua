@@ -75,12 +75,10 @@
 				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
 			 return
 			end
-		local position
-		if inAdr:match('^$cdnmovies') then
-			position = 0
+		if adr:match('^$cdnmovies') then
+			m_simpleTV.Control.SetNewAddressT({address = retAdr, position = 0})
 		end
 		m_simpleTV.Control.CurrentAddress = retAdr
-		m_simpleTV.Control.SetNewAddressT({address = retAdr, position = position})
 -- debug_in_file(retAdr .. '\n')
 		m_simpleTV.Control.CurrentTitle_UTF8 = title
 		m_simpleTV.Control.SetTitle(title)
@@ -125,8 +123,7 @@
 		local tab = m_simpleTV.User.cdnmovies.tab
 		local title = m_simpleTV.User.cdnmovies.title
 		local tr = m_simpleTV.User.cdnmovies.tr
-		local season
-		local seasonName = ''
+		local season = m_simpleTV.User.cdnmovies.season or 1
 		local t, i = {}, 1
 			while tab[tr].folder[i] do
 				t[i] = {}
@@ -137,7 +134,7 @@
 			end
 			if #t == 0 then return end
 		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀'}
-		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, 0, t, 10000, 1 + 2 + 4 + 8)
+		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, season - 1, t, 10000, 1 + 2 + 4 + 8)
 			if ret == 3 then
 				local f = transl()
 				if f then
@@ -146,12 +143,16 @@
 			 return
 			end
 			if not id then return end
-	 return t[id].Address, ' (' .. t[id].Name .. ')'
+		m_simpleTV.User.cdnmovies.season = t[id].Address
+		m_simpleTV.User.cdnmovies.seasonName = ' (' .. t[id].Name .. ')'
+	 return true
 	end
-	local function episodes(season, seasonName)
+	local function episodes()
 		local tr = m_simpleTV.User.cdnmovies.tr
 		local tab = m_simpleTV.User.cdnmovies.tab
 		local title = m_simpleTV.User.cdnmovies.title
+		local season = m_simpleTV.User.cdnmovies.season
+		local seasonName = m_simpleTV.User.cdnmovies.seasonName
 		local t, i = {}, 1
 			while tab[tr].folder[season].folder[i] do
 				t[i] = {}
@@ -203,10 +204,11 @@
 	 return tab, answer:match('folder'), m_simpleTV.Control.CurrentTitle_UTF8
 	end
 	function serials()
-		local season, seasonName = seasons()
-			if not season then return end
-		local adr, title = episodes(season, seasonName)
-		play(adr, title)
+			if not seasons() then
+				showMsg('2')
+			 return
+			end
+		play(episodes(seasonName))
 	 return
 	end
 	function qlty_cdnmovies()
@@ -241,6 +243,7 @@
 	m_simpleTV.User.cdnmovies.tab = tab
 	m_simpleTV.User.cdnmovies.title = title
 	m_simpleTV.User.cdnmovies.tr = nil
+	m_simpleTV.User.cdnmovies.season = nil
 		if not transl() then
 			showMsg('1')
 		 return
