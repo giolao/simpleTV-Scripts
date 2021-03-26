@@ -1,4 +1,4 @@
--- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (26/3/21)
+-- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (27/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://700filmov.ru/film/637
@@ -83,7 +83,6 @@
 	end
 	local function transl()
 		local tab = m_simpleTV.User.cdnmovies.tab
-		local title = m_simpleTV.User.cdnmovies.title
 		local selected = m_simpleTV.User.cdnmovies.tr
 		local selected_dubl, selected_mnogoPro
 		local hash, t = {}, {}
@@ -112,9 +111,15 @@
 				end
 			end
 		selected = selected or selected_dubl or selected_mnogoPro or #t
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, selected - 1, t, 10000, 1 + 2 + 4 + 8)
+		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. m_simpleTV.User.cdnmovies.title, selected - 1, t, 10000, 1 + 2 + 4 + 8)
 			if t[1].Address then
 				id = id or selected
+			elseif not id
+				and m_simpleTV.Control.GetState() == 0
+				and m_simpleTV.User.cdnmovies.DelayedAddress
+			then
+				m_simpleTV.Control.ExecuteAction(11)
+			 return
 			elseif not id then
 			 return
 			end
@@ -137,13 +142,20 @@
 		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀'}
 		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, - 1, t, 10000, 1 + 2 + 4 + 8)
 			if ret == 3 then
-				local f = transl()
-				if f then
+				if transl() then
 					serials()
 				end
 			 return
 			end
-			if not id then return end
+			if not id
+				and m_simpleTV.Control.GetState() == 0
+				and m_simpleTV.User.cdnmovies.DelayedAddress
+			then
+				m_simpleTV.Control.ExecuteAction(11)
+			 return
+			elseif not id then
+			 return
+			end
 		m_simpleTV.User.cdnmovies.season = id
 		m_simpleTV.User.cdnmovies.seasonName = ' (' .. t[id].Name .. ')'
 	 return true
@@ -151,9 +163,7 @@
 	local function episodes()
 		local tr = m_simpleTV.User.cdnmovies.tr
 		local tab = m_simpleTV.User.cdnmovies.tab
-		local title = m_simpleTV.User.cdnmovies.title
 		local season = m_simpleTV.User.cdnmovies.season
-		local seasonName = m_simpleTV.User.cdnmovies.seasonName
 		local t, i = {}, 1
 			while tab[tr].folder[season].folder[i] do
 				t[i] = {}
@@ -163,14 +173,7 @@
 				i = i + 1
 			end
 			if #t == 0 then return end
-		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀', ButtonScript =
-		[[
-		m_simpleTV.User.cdnmovies.DelayedAddress = nil
-		m_simpleTV.User.cdnmovies.tr = m_simpleTV.User.cdnmovies.tr_curent
-		m_simpleTV.User.cdnmovies.season = m_simpleTV.User.cdnmovies.season_curent
-		m_simpleTV.User.cdnmovies.seasonName = m_simpleTV.User.cdnmovies.seasonName_curent
-		serials()
-		]]}
+		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀', ButtonScript = 'serials()'}
 		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'qlty_cdnmovies()'}
 		t.ExtParams = {}
 		t.ExtParams.LuaOnOkFunName = 'cdnmovies_OnMultiAddressOk'
@@ -182,17 +185,10 @@
 			 return
 			end
 		m_simpleTV.User.cdnmovies.DelayedAddress = retAdr
-		local pl = 0
-		if #t == 1 then
-			pl = 32
-		end
-		m_simpleTV.OSD.ShowSelect_UTF8(title .. seasonName, 0, t, 10000, pl + 64)
-		m_simpleTV.User.cdnmovies.episodeTitle = title .. seasonName .. ': ' .. t[1].Name
+		local title = m_simpleTV.User.cdnmovies.title .. m_simpleTV.User.cdnmovies.seasonName
+		m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 10000, 64)
+		m_simpleTV.User.cdnmovies.episodeTitle = title .. ': ' .. t[1].Name
 		m_simpleTV.Control.CurrentAddress = 'wait'
-		m_simpleTV.User.cdnmovies.tr_curent = tr
-		m_simpleTV.User.cdnmovies.season_curent = season
-		m_simpleTV.User.cdnmovies.seasonName_curent = seasonName
-	 return
 	end
 	local function movie()
 		local title = m_simpleTV.User.cdnmovies.title
@@ -278,10 +274,13 @@
 	end
 	m_simpleTV.User.cdnmovies.tab = tab
 	m_simpleTV.User.cdnmovies.tr = nil
-	m_simpleTV.User.cdnmovies.season = nil
-		if not transl() then return end
-	if ser then
-		serials()
-	else
-		movie()
+	if transl() then
+		if ser then
+			serials()
+		else
+			if m_simpleTV.Control.MainMode == 0 then
+				m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = '', TypeBackColor = 0, UseLogo = 0, Once = 1})
+			end
+			movie()
+		end
 	end
