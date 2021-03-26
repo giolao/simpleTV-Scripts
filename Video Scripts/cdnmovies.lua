@@ -26,6 +26,7 @@
 	if not m_simpleTV.User.cdnmovies then
 		m_simpleTV.User.cdnmovies = {}
 	end
+	m_simpleTV.User.cdnmovies.DelayedAddress = nil
 	local function showMsg(str)
 		local t = {text = 'CDN Movies ошибка: ' .. str, showTime = 1000 * 8, color = ARGB(255, 255, 102, 0), id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
@@ -76,13 +77,9 @@
 			 return
 			end
 -- debug_in_file(retAdr .. '\n')
-		m_simpleTV.Control.CurrentTitle_UTF8 = title
 		m_simpleTV.Control.SetTitle(title)
 		m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
 		m_simpleTV.Control.CurrentAddress = retAdr
-		if adr:match('^$cdnmovies') then
-			m_simpleTV.Control.SetNewAddressT({address = retAdr, position = 0})
-		end
 	end
 	local function transl()
 		local tab = m_simpleTV.User.cdnmovies.tab
@@ -116,7 +113,11 @@
 			end
 		selected = selected or selected_dubl or selected_mnogoPro or #t
 		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. title, selected - 1, t, 10000, 1 + 2 + 4 + 8)
-			if not id then return end
+			if t[1].Address then
+				id = id or selected
+			elseif not id then
+			 return
+			end
 		m_simpleTV.User.cdnmovies.tr = id
 		m_simpleTV.User.cdnmovies.adr = t[id].Address
 	 return true
@@ -125,7 +126,6 @@
 		local tab = m_simpleTV.User.cdnmovies.tab
 		local title = m_simpleTV.User.cdnmovies.title
 		local tr = m_simpleTV.User.cdnmovies.tr
-		local season = m_simpleTV.User.cdnmovies.season or 1
 		local t, i = {}, 1
 			while tab[tr].folder[i] do
 				t[i] = {}
@@ -135,7 +135,7 @@
 			end
 			if #t == 0 then return end
 		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀'}
-		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, season - 1, t, 10000, 1 + 2 + 4 + 8)
+		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('сезон: ' .. title, - 1, t, 10000, 1 + 2 + 4 + 8)
 			if ret == 3 then
 				local f = transl()
 				if f then
@@ -163,17 +163,36 @@
 				i = i + 1
 			end
 			if #t == 0 then return end
-		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀', ButtonScript = 'serials_curent()'}
+		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀', ButtonScript =
+		[[
+		m_simpleTV.User.cdnmovies.DelayedAddress = nil
+		m_simpleTV.User.cdnmovies.tr = m_simpleTV.User.cdnmovies.tr_curent
+		m_simpleTV.User.cdnmovies.season = m_simpleTV.User.cdnmovies.season_curent
+		m_simpleTV.User.cdnmovies.seasonName = m_simpleTV.User.cdnmovies.seasonName_curent
+		serials()
+		]]}
 		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'qlty_cdnmovies()'}
+		t.ExtParams = {}
+		t.ExtParams.LuaOnOkFunName = 'cdnmovies_OnMultiAddressOk'
+		t.ExtParams.LuaOnCancelFunName = 'cdnmovies_OnMultiAddressCancel'
+		t.ExtParams.LuaOnTimeoutFunName = 'cdnmovies_OnMultiAddressCancel'
+		local retAdr = getAdr(t[1].Address)
+			if not retAdr then
+				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
+			 return
+			end
+		m_simpleTV.User.cdnmovies.DelayedAddress = retAdr
 		local pl = 0
 		if #t == 1 then
 			pl = 32
 		end
 		m_simpleTV.OSD.ShowSelect_UTF8(title .. seasonName, 0, t, 10000, pl + 64)
+		m_simpleTV.User.cdnmovies.episodeTitle = title .. seasonName .. ': ' .. t[1].Name
+		m_simpleTV.Control.CurrentAddress = 'wait'
 		m_simpleTV.User.cdnmovies.tr_curent = tr
 		m_simpleTV.User.cdnmovies.season_curent = season
 		m_simpleTV.User.cdnmovies.seasonName_curent = seasonName
-	 return t[1].Address, title .. seasonName .. ': ' .. t[1].Name
+	 return
 	end
 	local function movie()
 		local title = m_simpleTV.User.cdnmovies.title
@@ -186,7 +205,6 @@
 		t.ExtButton1 = {ButtonEnable = true, ButtonName = '✕', ButtonScript = 'm_simpleTV.Control.ExecuteAction(37)'}
 		m_simpleTV.OSD.ShowSelect_UTF8('CDN Movies', 0, t, 10000, 64 + 32 + 128)
 		play(adr, title)
-	 return
 	end
 	local function getData()
 		local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
@@ -205,18 +223,8 @@
 	end
 	function serials()
 		if seasons() then
-			play(episodes())
+			episodes()
 		end
-	 return
-	end
-	function serials_curent()
-		m_simpleTV.User.cdnmovies.tr = m_simpleTV.User.cdnmovies.tr_curent
-		m_simpleTV.User.cdnmovies.season = m_simpleTV.User.cdnmovies.season_curent
-		m_simpleTV.User.cdnmovies.seasonName = m_simpleTV.User.cdnmovies.seasonName_curent
-		if seasons() then
-			play(episodes())
-		end
-	 return
 	end
 	function qlty_cdnmovies()
 		local t = m_simpleTV.User.cdnmovies.Tab
@@ -228,6 +236,22 @@
 		if ret == 1 then
 			m_simpleTV.Control.SetNewAddressT({address = t[id].Address, position = m_simpleTV.Control.GetPosition()})
 			m_simpleTV.Config.SetValue('cdnmovies_qlty', t[id].qlty)
+		end
+	end
+	function cdnmovies_OnMultiAddressOk(Object,id)
+		if id == 0 then
+			cdnmovies_OnMultiAddressCancel(Object)
+		else
+			m_simpleTV.User.cdnmovies.DelayedAddress = nil
+		end
+	end
+	function cdnmovies_OnMultiAddressCancel(Object)
+		if m_simpleTV.User.cdnmovies.DelayedAddress then
+			m_simpleTV.Control.SetNewAddressT({address = m_simpleTV.User.cdnmovies.DelayedAddress, position = 0})
+			m_simpleTV.User.cdnmovies.DelayedAddress = nil
+			local title = m_simpleTV.User.cdnmovies.episodeTitle
+			m_simpleTV.Control.SetTitle(title)
+			m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
 		end
 	end
 		if inAdr:match('^$cdnmovies') then
@@ -247,7 +271,11 @@
 			showMsg(tab or 'нет данных')
 		 return
 		end
-	m_simpleTV.User.cdnmovies.title = m_simpleTV.Control.CurrentTitle_UTF8
+	local title = m_simpleTV.Control.CurrentTitle_UTF8
+	m_simpleTV.User.cdnmovies.title = title
+	if m_simpleTV.Control.MainMode == 0 then
+		m_simpleTV.Control.ChangeChannelName(title, m_simpleTV.Control.ChannelID, false)
+	end
 	m_simpleTV.User.cdnmovies.tab = tab
 	m_simpleTV.User.cdnmovies.tr = nil
 	m_simpleTV.User.cdnmovies.season = nil
