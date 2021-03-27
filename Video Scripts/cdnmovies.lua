@@ -173,12 +173,6 @@
 				i = i + 1
 			end
 			if #t == 0 then return end
-		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀', ButtonScript = 'serials()'}
-		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'qlty_cdnmovies()'}
-		t.ExtParams = {}
-		t.ExtParams.LuaOnOkFunName = 'cdnmovies_OnMultiAddressOk'
-		t.ExtParams.LuaOnCancelFunName = 'cdnmovies_OnMultiAddressCancel'
-		t.ExtParams.LuaOnTimeoutFunName = 'cdnmovies_OnMultiAddressCancel'
 		local retAdr = getAdr(t[1].Address)
 			if not retAdr then
 				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
@@ -186,9 +180,16 @@
 			end
 		m_simpleTV.User.cdnmovies.DelayedAddress = retAdr
 		local title = m_simpleTV.User.cdnmovies.title .. m_simpleTV.User.cdnmovies.seasonName
+		m_simpleTV.Control.SetTitle(title)
+		t.ExtButton1 = {ButtonEnable = true, ButtonName = '🢀', ButtonScript = 'serials()'}
+		t.ExtButton0 = {ButtonEnable = true, ButtonName = '⚙', ButtonScript = 'qlty_cdnmovies()'}
+		t.ExtParams = {}
+		t.ExtParams.LuaOnCancelFunName = 'OnMultiAddressCancel_cdnmovies'
+		t.ExtParams.LuaOnTimeoutFunName = 'OnMultiAddressCancel_cdnmovies'
 		m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 10000, 64)
 		m_simpleTV.User.cdnmovies.episodeTitle = title .. ': ' .. t[1].Name
 		m_simpleTV.Control.CurrentAddress = 'wait'
+		m_simpleTV.Control.SetNewAddressT({address = m_simpleTV.Control.CurrentAddress})
 	end
 	local function movie()
 		local title = m_simpleTV.User.cdnmovies.title
@@ -234,20 +235,15 @@
 			m_simpleTV.Config.SetValue('cdnmovies_qlty', t[id].qlty)
 		end
 	end
-	function cdnmovies_OnMultiAddressOk(Object,id)
-		if id == 0 then
-			cdnmovies_OnMultiAddressCancel(Object)
-		else
-			m_simpleTV.User.cdnmovies.DelayedAddress = nil
-		end
-	end
-	function cdnmovies_OnMultiAddressCancel(Object)
+	function OnMultiAddressCancel_cdnmovies(Object)
 		if m_simpleTV.User.cdnmovies.DelayedAddress then
-			m_simpleTV.Control.SetNewAddressT({address = m_simpleTV.User.cdnmovies.DelayedAddress, position = 0})
+			if m_simpleTV.Control.GetState() == 0 then
+				m_simpleTV.Control.SetNewAddressT({address = m_simpleTV.User.cdnmovies.DelayedAddress, position = 0})
+				local title = m_simpleTV.User.cdnmovies.episodeTitle
+				m_simpleTV.Control.SetTitle(title)
+				m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
+			end
 			m_simpleTV.User.cdnmovies.DelayedAddress = nil
-			local title = m_simpleTV.User.cdnmovies.episodeTitle
-			m_simpleTV.Control.SetTitle(title)
-			m_simpleTV.OSD.ShowMessageT({text = title, showTime = 1000 * 5, id = 'channelName'})
 		end
 	end
 		if inAdr:match('^$cdnmovies') then
