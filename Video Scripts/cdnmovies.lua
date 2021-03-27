@@ -11,7 +11,6 @@
 		 return
 		end
 	local inAdr = m_simpleTV.Control.CurrentAddress
-	m_simpleTV.OSD.ShowMessageT({text = '', showTime = 1000, id = 'channelName'})
 	if not inAdr:match('&kinopoisk') then
 		if m_simpleTV.Control.MainMode == 0 then
 			m_simpleTV.Interface.SetBackground({BackColor = 0, PictFileName = '', TypeBackColor = 0, UseLogo = 0, Once = 1})
@@ -84,7 +83,6 @@
 	local function transl()
 		local tab = m_simpleTV.User.cdnmovies.tab
 		local selected = m_simpleTV.User.cdnmovies.tr
-		local selected_dubl, selected_mnogoPro
 		local hash, t = {}, {}
 			for i = 1, #tab do
 				local title = trim(tab[i].title)
@@ -93,25 +91,28 @@
 					hash[title] = true
 				end
 			end
+		local translSelect = {'дублир', 'фессион'}
 			for i = 1, #t do
 				t[i].Id = i
 				t[i].Address = t[i].file
 				local name = t[i].title
 				t[i].Name = name
-				if not selected_dubl
-					and name:match('дублир')
-				then
-					selected_dubl = i
-				end
-				if not selected_mnogoPro
-					and name:match('много')
-					and name:match('фессион')
-				then
-					selected_mnogoPro = i
+				if not selected then
+					for j = 1, #translSelect do
+						if name:match(translSelect[j]) then
+							selected = i
+						 break
+						end
+					end
 				end
 			end
-		selected = selected or selected_dubl or selected_mnogoPro or #t
-		local _, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. m_simpleTV.User.cdnmovies.title, selected - 1, t, 10000, 1 + 2 + 4 + 8)
+		selected = selected or #t
+		t.ExtButton0 = {ButtonEnable = true, ButtonName = '🎞️'}
+		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. m_simpleTV.User.cdnmovies.title, selected - 1, t, 10000, 1 + 2 + 4 + 8)
+			if ret == 2 then
+				m_simpleTV.Control.ExecuteAction(63)
+			 return
+			end
 			if t[1].Address then
 				id = id or selected
 			elseif not id
