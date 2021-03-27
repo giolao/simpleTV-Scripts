@@ -28,7 +28,8 @@
 	answer = answer:gsub('<!%-.-%->', '')
 	local title = answer:match('<title>(.-)</title>') or 'TELESPORT'
 	if m_simpleTV.Control.MainMode == 0 then
-		m_simpleTV.Control.ChangeChannelLogo(logo, m_simpleTV.Control.ChannelID)
+		local poster = answer:match('"og:image" content="([^"]+)') or logo
+		m_simpleTV.Control.ChangeChannelLogo(poster, m_simpleTV.Control.ChannelID)
 		m_simpleTV.Control.ChangeChannelName(title, m_simpleTV.Control.ChannelID, false)
 	end
 	local url = answer:match('<iframe.-src="([^"]+)')
