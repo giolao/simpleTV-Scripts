@@ -47,7 +47,6 @@
 	answer = answer:match('"sources":(%[.-%])};')
 		if not answer then return end
 	answer = answer:gsub('%[%]', '""')
-	answer = answer:gsub('\u0', '\\u0')
 	answer = answer:gsub('\\/', '/')
 	local tab = json.decode(answer)
 		if not tab then return end
