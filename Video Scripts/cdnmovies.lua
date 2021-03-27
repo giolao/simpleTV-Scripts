@@ -1,4 +1,4 @@
--- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (27/3/21)
+-- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (28/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://700filmov.ru/film/637
@@ -82,7 +82,6 @@
 	end
 	local function transl()
 		local tab = m_simpleTV.User.cdnmovies.tab
-		local selected = m_simpleTV.User.cdnmovies.tr
 		local hash, t = {}, {}
 			for i = 1, #tab do
 				local title = trim(tab[i].title)
@@ -91,22 +90,25 @@
 					hash[title] = true
 				end
 			end
-		local translSelect = {'дублир', 'фессион'}
+		local selected = m_simpleTV.User.cdnmovies.tr
+		local selected_dubl, selected_pro
 			for i = 1, #t do
 				t[i].Id = i
 				t[i].Address = t[i].file
 				local name = t[i].title
 				t[i].Name = name
-				if not selected then
-					for j = 1, #translSelect do
-						if name:match(translSelect[j]) then
-							selected = i
-						 break
-						end
-					end
+				if not selected_dubl
+					and name:match('дублир')
+				then
+					selected_dubl = i
+				end
+				if not selected_pro
+					and name:match('фессион')
+				then
+					selected_pro = i
 				end
 			end
-		selected = selected or #t
+		selected = selected or selected_dubl or selected_pro or #t
 		t.ExtButton0 = {ButtonEnable = true, ButtonName = '🎞️'}
 		local ret, id = m_simpleTV.OSD.ShowSelect_UTF8('перевод: ' .. m_simpleTV.User.cdnmovies.title, selected - 1, t, 10000, 1 + 2 + 4 + 8)
 			if ret == 2 then
