@@ -120,6 +120,10 @@
 			then
 				m_simpleTV.Control.ExecuteAction(11)
 			 return
+			elseif not id
+				and m_simpleTV.Control.GetState() == 0
+			then
+				id = id or selected
 			elseif not id then
 			 return
 			end
@@ -153,6 +157,10 @@
 			then
 				m_simpleTV.Control.ExecuteAction(11)
 			 return
+			elseif not id
+				and m_simpleTV.Control.GetState() == 0
+			then
+				id = 1
 			elseif not id then
 			 return
 			end
@@ -186,7 +194,7 @@
 		t.ExtParams = {}
 		t.ExtParams.LuaOnCancelFunName = 'OnMultiAddressCancel_cdnmovies'
 		t.ExtParams.LuaOnTimeoutFunName = 'OnMultiAddressCancel_cdnmovies'
-		m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 10000, 64)
+		m_simpleTV.OSD.ShowSelect_UTF8(title, 0, t, 10000, 2 + 64)
 		m_simpleTV.User.cdnmovies.episodeTitle = title .. ': ' .. t[1].Name
 		m_simpleTV.Control.CurrentAddress = 'wait'
 		m_simpleTV.Control.SetNewAddressT({address = m_simpleTV.Control.CurrentAddress})
