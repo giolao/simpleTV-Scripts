@@ -1,8 +1,11 @@
 -- видеоскрипт для сайта https://tele-sport.ru (27/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
+-- ## необходим ##
+-- видоскрипт: ok.lua
 -- ## открывает подобные ссылки ##
 -- https://tele-sport.ru/skiing/sprint-1/4-1/2-finaly-chempionat-rossii-po-lyzhnym-gonkam-2021
 -- https://tele-sport.ru/show/primernyi-serial/primernyi-serial-14-kokorin-v-promorolike-fiorentiny-istoriya-bolelshchika-raketchika-iz-san-sebastyana-astroprognoz
+-- https://tele-sport.ru/football/spain/real-sosedad-barselona-la-liga-0-3-video-dublya-serzhino-desta
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://tele%-sport%.ru') then return end
@@ -28,7 +31,15 @@
 		m_simpleTV.Control.ChangeChannelLogo(logo, m_simpleTV.Control.ChannelID)
 		m_simpleTV.Control.ChangeChannelName(title, m_simpleTV.Control.ChannelID, false)
 	end
-	local url = answer:match('http[^\'"<>]+tele%-sport%.ru/embed[^\'"<>]+')
+	local url = answer:match('<iframe.-src="([^"]+)')
+		if not url then return end
+	url = url:gsub('^//', 'http://')
+		if not url:match('tele%-sport') then
+			m_simpleTV.Control.ChangeAddress = 'No'
+			m_simpleTV.Control.CurrentAddress = url
+			dofile(m_simpleTV.MainScriptDir .. 'user/video/video.lua')
+		 return
+		end
 	rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = 'Referer: ' .. inAdr})
 	m_simpleTV.Http.Close(session)
 		if rc ~= 200 then return end
@@ -40,7 +51,7 @@
 	answer = answer:gsub('\\/', '/')
 	local tab = json.decode(answer)
 		if not tab then return end
-	local extOpt = '$OPT:NO-STIMESHIFT$OPT:demux=mp4,any$OPT:http-referrer=' .. inAdr
+	local extOpt = '$OPT:http-referrer=' .. inAdr
 	local t, i = {}, 1
 		while tab[i] do
 			local res = tab[i].resolution:match('(%d+)p')
