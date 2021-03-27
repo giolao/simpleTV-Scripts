@@ -97,15 +97,17 @@
 				t[i].Address = t[i].file
 				local name = t[i].title
 				t[i].Name = name
-				if not selected_dubl
-					and name:match('дублир')
-				then
-					selected_dubl = i
-				end
-				if not selected_pro
-					and name:match('фессион')
-				then
-					selected_pro = i
+				if not selected then
+					if not selected_dubl
+						and name:match('дублир')
+					then
+						selected_dubl = i
+					end
+					if not selected_pro
+						and name:match('фессион')
+					then
+						selected_pro = i
+					end
 				end
 			end
 		selected = selected or selected_dubl or selected_pro or #t
