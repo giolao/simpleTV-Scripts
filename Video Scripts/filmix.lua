@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://filmix.ac (15/3/21)
+-- видеоскрипт для сайта https://filmix.ac (28/3/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## авторизация ##
 -- логин, пароль установить в 'Password Manager', для id - filmix
@@ -363,12 +363,6 @@ local zer = 'https://filmix.life'
 				showError('13 - ' .. rc)
 			 return
 			end
-		answer = answer or ''
-		answer = playerjs.decode(answer, playerjs_url)
-			if not answer or answer == '' then
-				showError('14')
-			 return
-			end
 		local tab = json.decode(answer:gsub('%[%]', '""'))
 			if not tab then
 				showError('15')
@@ -381,7 +375,7 @@ local zer = 'https://filmix.life'
 						if not tab[j] then break end
 					s[j] = {}
 					s[j].Id = j
-					s[j].Name = m_simpleTV.Common.multiByteToUTF8(tab[j].title)
+					s[j].Name = tab[j].title
 					s[j].Address = j
 					j = j + 1
 				end
@@ -408,7 +402,7 @@ local zer = 'https://filmix.life'
 						if not tab[sesnom].folder[i] then break end
 					t[i] = {}
 					t[i].Id = i
-					t[i].Name = m_simpleTV.Common.multiByteToUTF8(tab[sesnom].folder[i].title):gsub('%(Сезон.-%)', '')
+					t[i].Name = tab[sesnom].folder[i].title:gsub('%(Сезон.-%)', '')
 					if t[i].Name == ' ' then
 						t[i].Name = '0 серия'
 					end
