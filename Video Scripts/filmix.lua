@@ -1,4 +1,4 @@
--- видеоскрипт для сайта https://filmix.ac (28/3/21)
+-- видеоскрипт для сайта https://filmix.ac (2/4/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## авторизация ##
 -- логин, пароль установить в 'Password Manager', для id - filmix
@@ -222,7 +222,7 @@ local zer = 'https://filmix.life'
 		end
 		local retAdr = GetQualityFromAddress(Adr:gsub('^%$filmixnet', ''))
 			if not retAdr then
-				showError('4')
+				showError('4, не доступно')
 				m_simpleTV.Control.CurrentAddress = 'http://wonky.lostcut.net/vids/error_getlink.avi'
 			 return
 			end
@@ -363,6 +363,15 @@ local zer = 'https://filmix.life'
 				showError('13 - ' .. rc)
 			 return
 			end
+		answer = answer or ''
+		if answer:match('^#') then
+			answer = playerjs.decode(answer, playerjs_url)
+				if not answer or answer == '' then
+					showError('14')
+				 return
+				end
+			answer = m_simpleTV.Common.multiByteToUTF8(answer)
+		end
 		local tab = json.decode(answer:gsub('%[%]', '""'))
 			if not tab then
 				showError('15')
@@ -418,7 +427,7 @@ local zer = 'https://filmix.life'
 						if not tab[i] then break end
 					t[i] = {}
 					t[i].Id = i
-					t[i].Name = m_simpleTV.Common.multiByteToUTF8(tab[i].title):gsub('%(Сезон.-%)', '')
+					t[i].Name = tab[i].title:gsub('%(Сезон.-%)', '')
 					t[i].Address = '$filmixnet' .. tab[i].file
 					i = i + 1
 				end
@@ -441,13 +450,13 @@ local zer = 'https://filmix.life'
 		inAdr = t[1].Address
 		title = title .. ' - ' .. m_simpleTV.User.filmix.Tabletitle[1].Name
 	else
-		if not answer:match('^%[') then
+		if answer:match('^#') then
 			inAdr = playerjs.decode(answer, playerjs_url)
 		else
 			inAdr = answer
 		end
 			if not inAdr or inAdr == '' then
-				showError('19')
+				showError('19, не доступно')
 			 return
 			end
 		local t1 = {}
