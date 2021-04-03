@@ -1,4 +1,4 @@
--- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (28/3/21)
+-- видеоскрипт для видеобалансера "CDN Movies" https://cdnmovies.net (4/4/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://700filmov.ru/film/637
@@ -221,7 +221,7 @@
 			if not session then return end
 		m_simpleTV.Http.SetTimeout(session, 8000)
 		inAdr = inAdr:gsub('&kinopoisk', '')
-		local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr})
+		local rc, answer = m_simpleTV.Http.Request(session, {url = inAdr, headers = 'Referer: https://cdnmovies.net/'})
 		m_simpleTV.Http.Close(session)
 			if rc ~= 200 then
 			 return 'это видео удалено'
