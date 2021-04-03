@@ -5,14 +5,16 @@
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
 		if not m_simpleTV.Control.CurrentAddress:match('^https?://rutube%.ru/.+') then return end
+	local logo ='https://raw.githubusercontent.com/Nexterr-origin/simpleTV-Images/main/rutube.png'
 	if m_simpleTV.Control.MainMode == 0 then
-		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = '', UseLogo = 0, Once = 1})
+		m_simpleTV.OSD.ShowMessageT({text = 'RUTUBE', showTime = 5000, id = 'channelName'})
+		m_simpleTV.Interface.SetBackground({BackColor = 0, TypeBackColor = 0, PictFileName = logo, UseLogo = 1, Once = 1})
 	end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
 	local function showMsg(str)
-		local t = {text = 'rutube ошибка: ' .. str, showTime = 1000 * 8, color = ARGB(255, 255, 102, 0), id = 'channelName'}
+		local t = {text = 'RUTUBE - ошибка ' .. str, showTime = 1000 * 8, color = ARGB(255, 255, 102, 0), id = 'channelName'}
 		m_simpleTV.OSD.ShowMessageT(t)
 	end
 	local id = inAdr:match('/video/(%w+)') or inAdr:match('/audio/(%w+)')
@@ -34,7 +36,7 @@
 	local rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = headers})
 		if rc ~= 200 then
 			m_simpleTV.Http.Close(session)
-			showMsg('1')
+			showMsg('1, видео не доступно')
 		 return
 		end
 	answer = answer:gsub('\\', '\\\\')
@@ -61,7 +63,7 @@
 		live = true
 	else
 		m_simpleTV.Http.Close(session)
-		showMsg('3, видео не с "RUTUBE"')
+		showMsg('3, сторонее видео')
 	 return
 	end
 	local rc, answer = m_simpleTV.Http.Request(session, {url = retAdr})
@@ -83,12 +85,13 @@
 			if tab.thumbnail_url then
 				thumbnail_url = tab.thumbnail_url .. '?size=1'
 			end
-			thumbnail_url = thumbnail_url or ''
+			thumbnail_url = thumbnail_url or logo
 			m_simpleTV.Control.ChangeChannelLogo(thumbnail_url, m_simpleTV.Control.ChannelID)
 		end
 		title = addTitle .. ' - ' .. title
 	end
 	m_simpleTV.Control.CurrentTitle_UTF8 = title
+	m_simpleTV.OSD.ShowMessageT({text = title, showTime = 5000, id = 'channelName'})
 	local t0 = {}
 	if live then
 		for w in answer:gmatch('EXT%-X%-STREAM%-INF.-\n.-\n') do
