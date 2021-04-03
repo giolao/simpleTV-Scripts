@@ -31,7 +31,7 @@
 	function rutubeLiveSaveQuality(obj, id)
 		m_simpleTV.Config.SetValue('rutube_live_qlty', tostring(id))
 	end
-	local url = 'https://rutube.ru/api/play/options/' .. id
+	local url = decode64('aHR0cHM6Ly9ydXR1YmUucnUvYXBpL3BsYXkvb3B0aW9ucy8') .. id
 	local headers = 'Referer: ' .. inAdr
 	local rc, answer = m_simpleTV.Http.Request(session, {url = url, headers = headers})
 		if rc ~= 200 then
@@ -80,6 +80,7 @@
 		if m_simpleTV.Control.MainMode == 0 then
 			title = unescape3(title)
 			title = title:gsub('\\"', '"')
+			title = addTitle .. ' - ' .. title
 			m_simpleTV.Control.ChangeChannelName(title, m_simpleTV.Control.ChannelID, false)
 			local thumbnail_url
 			if tab.thumbnail_url then
@@ -88,7 +89,6 @@
 			thumbnail_url = thumbnail_url or logo
 			m_simpleTV.Control.ChangeChannelLogo(thumbnail_url, m_simpleTV.Control.ChannelID)
 		end
-		title = addTitle .. ' - ' .. title
 	end
 	m_simpleTV.Control.CurrentTitle_UTF8 = title
 	m_simpleTV.OSD.ShowMessageT({text = title, showTime = 5000, id = 'channelName'})
