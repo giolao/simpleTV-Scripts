@@ -13,7 +13,8 @@
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	m_simpleTV.Control.ChangeAddress = 'Yes'
 	m_simpleTV.Control.CurrentAddress = 'error'
-	local session = m_simpleTV.Http.New('Mozilla/5.0 (Windows NT 10.0; rv:86.0) Gecko/20100101 Firefox/86.0')
+	local userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:87.0) Gecko/20100101 Firefox/87.0'
+	local session = m_simpleTV.Http.New(userAgent)
 		if not session then return end
 	m_simpleTV.Http.SetTimeout(session, 8000)
 	if not m_simpleTV.User then
@@ -39,10 +40,12 @@
 			end
 		login = m_simpleTV.Common.toPercentEncoding(login)
 		pass = m_simpleTV.Common.toPercentEncoding(pass)
-		local body = string.format('login_name=%s&login_password=%s&login=submit', login, pass)
-		local headers = 'Content-Type: application/x-www-form-urlencoded\nReferer: Referer: https://vse-tv.net/login.html\nOrigin: https://vse-tv.net'
-		local url = 'https://vse-tv.net/login.html'
-		local rc, answer = m_simpleTV.Http.Request(session, {body = body, url = url, method = 'post', headers = headers})
+		local t = {}
+		t.body = string.format('login_name=%s&login_password=%s&login=submit', login, pass)
+		t.headers = 'Content-Type: application/x-www-form-urlencoded\nReferer: Referer: https://vse-tv.net/login.html\nOrigin: https://vse-tv.net'
+		t.url = 'https://vse-tv.net/login.html'
+		t.method = 'post'
+		local rc, answer = m_simpleTV.Http.Request(session, t)
 			if rc ~= 200 then
 			 return ''
 			end
@@ -72,6 +75,6 @@
 	if retAdr:match('%.mp4') then
 		m_simpleTV.User.vsetv.cookies = nil
 	end
-	retAdr = retAdr .. '$OPT:http-referrer=' .. inAdr
+	retAdr = retAdr .. '$OPT:http-referrer=' .. inAdr .. '$OPT:http-user-agent=' .. userAgent
 	m_simpleTV.Control.CurrentAddress = retAdr
 -- debug_in_file(retAdr .. '\n')
