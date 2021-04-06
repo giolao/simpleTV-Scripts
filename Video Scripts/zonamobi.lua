@@ -1,10 +1,14 @@
--- видеоскрипт для сайта https://w1.zona.plus (14/10/20)
+-- видеоскрипт для сайта https://w1.zona.plus (6/4/21)
 -- Copyright © 2017-2021 Nexterr | https://github.com/Nexterr-origin/simpleTV-Scripts
 -- ## открывает подобные ссылки ##
 -- https://w113.zona.plus/movies/smertelnaya-zona
 -- ##
 		if m_simpleTV.Control.ChangeAddress ~= 'No' then return end
-		if not m_simpleTV.Control.CurrentAddress:match('^https?://[%w%.]*zona%.plus') then return end
+		if not m_simpleTV.Control.CurrentAddress:match('^https?://%w+%.zona%.plus')
+			and not m_simpleTV.Control.CurrentAddress:match('^https?://%w+%.zonaplus%.tv')
+		then
+		 return
+		end
 	local inAdr = m_simpleTV.Control.CurrentAddress
 	m_simpleTV.OSD.ShowMessageT({text = '', showTime = 1000, id = "channelName"})
 	if inAdr:match('zona%.plus') and not inAdr:match('&kinopoisk') then
